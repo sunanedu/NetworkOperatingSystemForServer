@@ -20,6 +20,10 @@
 - PC: 4 เครื่อง
 - สาย: สาย Straight-through และ Cross-over
 
+#### ถาพตัวอย่าง
+
+![vlan1-1.png]()
+
 #### การเชื่อมต่อสาย
 ```
 PC1 --(Straight-through)--> Switch1 (Fa0/1)
