@@ -22,7 +22,7 @@
 
 #### ถาพตัวอย่าง
 
-![ตัวอย่าง VLAN](unit2/vlan1-1.png)
+![ตัวอย่าง VLAN](https://raw.githubusercontent.com/sunanedu/NetworkOperatingSystemForServer/main/unit2/vlan1-1.png)
 
 #### การเชื่อมต่อสาย
 ```
