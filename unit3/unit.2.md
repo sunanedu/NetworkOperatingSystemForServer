@@ -104,6 +104,7 @@ SW1(config-if-range)#exit
 SW1(config)#interface fa0/24
 SW1(config-if)#switchport mode trunk
 SW1(config-if)#exit
+SW1(config)#wr
 ```
 
 #### การทดสอบการทำงาน
