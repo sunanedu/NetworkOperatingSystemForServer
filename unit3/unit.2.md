@@ -40,6 +40,15 @@ Switch1 (Fa0/24) --(Cross-over)--> Router (Fa0/0)
 
   * Fa0/0.20: IP = 192.168.20.1, Subnet = 255.255.255.0
 
+#### ภาพการเชื่อมต่อ (Text)
+
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)] -- [Fa0/24 (Trunk)] -- [R1 (Fa0/0)]
+[PC2 (VLAN 10)] -- [SW1 (Fa0/2)]
+[PC3 (VLAN 20)] -- [SW1 (Fa0/3)]
+[PC4 (VLAN 20)] -- [SW1 (Fa0/4)]
+```
+
 #### ภาพไดอะแกรม
 ![ตัวอย่าง ภาพ](img.png)
 
@@ -103,11 +112,3 @@ SW1(config-if)#exit
 
 * ใช้ ping จาก PC1 (VLAN 10) ไปยัง →  PC3 (VLAN 20) ควรสำเร็จ
 
-#### ภาพการเชื่อมต่อ (Text)
-
-```
-[PC1 (VLAN 10)] -- [SW1 (Fa0/1)] -- [Fa0/24 (Trunk)] -- [R1 (Fa0/0)]
-[PC2 (VLAN 10)] -- [SW1 (Fa0/2)]
-[PC3 (VLAN 20)] -- [SW1 (Fa0/3)]
-[PC4 (VLAN 20)] -- [SW1 (Fa0/4)]
-```
