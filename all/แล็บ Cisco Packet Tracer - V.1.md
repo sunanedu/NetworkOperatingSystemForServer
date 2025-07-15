@@ -51,7 +51,8 @@ SW1(config)#interface fa0/4
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 20
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -113,7 +114,8 @@ SW1(config-if)#switchport mode trunk
 SW1(config-if)#switchport trunk allowed vlan 10,20
 SW1(config-if)#switchport trunk native vlan 10
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 - **SW2**:
 ```plaintext
@@ -139,7 +141,8 @@ SW2(config-if)#switchport mode trunk
 SW2(config-if)#switchport trunk allowed vlan 10,20
 SW2(config-if)#switchport trunk native vlan 10
 SW2(config-if)#exit
-SW2(config)#write memory
+SW2(config)#exit
+SW2#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -189,7 +192,8 @@ SW1(config)#interface fa0/1
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 99
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -1436,9 +1440,4 @@ SW1(config)#write memory
 [Server1] -- [R2 (Gi0/1)]
 ```
 
----
-
-### ใบงาน 9.2: Dynamic NAT
-**วัตถุประสงค์**: ตั้งค่า Dynamic NAT เพื่อให้ PC เข้าถึงเครือข่ายภายนอก  
-**อุปกรณ์ที่ใช้**:
--
+**ต่อไป ไปที่อีกไฟล์ -->**
