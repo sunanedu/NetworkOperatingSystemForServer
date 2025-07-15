@@ -305,9 +305,9 @@ SW1#wr
 
 ### การตั้งค่า SW1
 ```plaintext
-Switch>enable
-Switch#configure terminal
-Switch(config)#hostname SW1
+SW1>enable
+SW1#configure terminal
+SW1(config)#hostname SW1
 SW1(config)#vlan 10
 SW1(config-vlan)#name DATA
 SW1(config-vlan)#exit
@@ -318,27 +318,29 @@ SW1(config)#interface fa0/1
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 10
 SW1(config-if)#switchport voice vlan 20
+SW1(config-if)#spanning-tree portfast
 SW1(config-if)#exit
 SW1(config)#interface fa0/2
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 10
 SW1(config-if)#switchport voice vlan 20
+SW1(config-if)#spanning-tree portfast
 SW1(config-if)#exit
-(เพิ่ม)
 SW1(config)#interface fa0/24
 SW1(config-if)#switchport mode trunk
 SW1(config-if)#switchport trunk allowed vlan 10,20
 SW1(config-if)#switchport trunk native vlan 10
 SW1(config-if)#exit
+SW1(config)#cdp run
 SW1(config)#exit
 SW1#wr
 ```
 
 ### การตั้งค่า R1 (DHCP Server และ Inter-VLAN Routing)
 ```plaintext
-Router>enable
-Router#configure terminal
-Router(config)#hostname R1
+R1>enable
+R1#configure terminal
+R1(config)#hostname R1
 R1(config)#interface gi0/0.10
 R1(config-subif)#encapsulation dot1Q 10
 R1(config-subif)#ip address 192.168.10.1 255.255.255.0
@@ -361,9 +363,22 @@ R1(dhcp-config)#network 192.168.20.0 255.255.255.0
 R1(dhcp-config)#default-router 192.168.20.1
 R1(dhcp-config)#option 150 ip 192.168.20.1
 R1(dhcp-config)#exit
+R1(config)#ip dhcp excluded-address 192.168.20.1
+R1(config)#cdp run
 R1(config)#exit
 R1#wr
 ```
+
+Note
+* รัน show ip dhcp binding บน R1 เพื่อยืนยันว่า Phone1 และ Phone2 ได้ IP
+* รัน show cdp neighbors detail บน SW1 เพื่อยืนยันว่า IP Phone อยู่ใน VLAN 20
+pc1 : ping 192.168.10.3
+pc1 : ping 192.168.20.1
+pc1 : ping 192.168.20.2
+
+R1#show ip dhcp binding
+SW1#show cdp neighbors
+
 
 ### การตั้งค่า PC1 และ PC2
 1. เปิด PC1 ใน Packet Tracer:
