@@ -253,7 +253,8 @@ SW1(config)#interface fa0/4
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 30
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -309,7 +310,8 @@ SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 10
 SW1(config-if)#switchport voice vlan 20
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -366,7 +368,8 @@ R1(config-subif)#exit
 R1(config)#interface gi0/0
 R1(config-if)#no shutdown
 R1(config-if)#exit
-R1(config)#write memory
+R1(config)#exit
+R1#wr
 ```
 - **SW1**:
 ```plaintext
@@ -400,7 +403,8 @@ SW1(config-if)#switchport mode trunk
 SW1(config-if)#switchport trunk allowed vlan 10,20
 SW1(config-if)#switchport trunk native vlan 10
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -474,7 +478,8 @@ SW1(config)#interface fa0/4
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 20
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -530,7 +535,8 @@ R1(config-if)#ip address 172.16.1.1 255.255.255.252
 R1(config-if)#no shutdown
 R1(config-if)#exit
 R1(config)#ip route 192.168.20.0 255.255.255.0 172.16.1.2
-R1(config)#write memory
+R1(config)#exit
+R1#wr
 ```
 - **R2**:
 ```plaintext
@@ -546,7 +552,8 @@ R2(config-if)#ip address 172.16.1.2 255.255.255.252
 R2(config-if)#no shutdown
 R2(config-if)#exit
 R2(config)#ip route 192.168.10.0 255.255.255.0 172.16.1.1
-R2(config)#write memory
+R2(config)#exit
+R2#wr
 ```
 - **SW1**:
 ```plaintext
@@ -561,7 +568,8 @@ SW1(config)#interface fa0/24
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 1
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 - **SW2**:
 ```plaintext
@@ -576,7 +584,8 @@ SW2(config)#interface fa0/24
 SW2(config-if)#switchport mode access
 SW2(config-if)#switchport access vlan 1
 SW2(config-if)#exit
-SW2(config)#write memory
+SW2(config)#exit
+SW2#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -632,7 +641,8 @@ R1(config-router)#version 2
 R1(config-router)#network 192.168.10.0
 R1(config-router)#network 172.16.1.0
 R1(config-router)#exit
-R1(config)#write memory
+R1(config)#exit
+R1#wr
 ```
 - **R2**:
 ```plaintext
@@ -652,7 +662,8 @@ R2(config-router)#version 2
 R2(config-router)#network 192.168.20.0
 R2(config-router)#network 172.16.1.0
 R2(config-router)#exit
-R2(config)#write memory
+R2(config)#exit
+R2#wr
 ```
 - **SW1** และ **SW2**: เหมือนกับใบงาน 3.1
 
@@ -701,7 +712,8 @@ R1(config)#router ospf 1
 R1(config-router)#network 192.168.10.0 0.0.0.255 area 0
 R1(config-router)#network 172.16.1.0 0.0.0.3 area 0
 R1(config-router)#exit
-R1(config)#write memory
+R1(config)#exit
+R1#wr
 ```
 - **R2**:
 ```plaintext
@@ -720,7 +732,8 @@ R2(config)#router ospf 1
 R2(config-router)#network 192.168.20.0 0.0.0.255 area 0
 R2(config-router)#network 172.16.1.0 0.0.0.3 area 0
 R2(config-router)#exit
-R2(config)#write memory
+R2(config)#exit
+R2#wr
 ```
 - **SW1** และ **SW2**: เหมือนกับใบงาน 3.1
 
@@ -771,7 +784,8 @@ R1(config)#ip dhcp pool LAN
 R1(dhcp-config)#network 192.168.10.0 255.255.255.0
 R1(dhcp-config)#default-router 192.168.10.1
 R1(dhcp-config)#exit
-R1(config)#write memory
+R1(config)#exit
+R1#wr
 ```
 - **SW1**:
 ```plaintext
@@ -790,7 +804,8 @@ SW1(config)#interface fa0/24
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 1
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 **การทดสอบการทำงาน**:
@@ -852,7 +867,8 @@ R1(config-if)#ip address 172.16.1.1 255.255.255.252
 R1(config-if)#no shutdown
 R1(config-if)#exit
 R1(config)#ip route 192.168.30.0 255.255.255.0 172.16.1.2
-R1(config)#write memory
+R1(config)#exit
+R1#wr
 ```
 - **R2**:
 ```plaintext
@@ -877,7 +893,8 @@ R2(config-if)#no shutdown
 R2(config-if)#exit
 R2(config)#ip route 192.168.10.0 255.255.255.0 172.16.1.1
 R2(config)#ip route 192.168.20.0 255.255.255.0 172.16.1.1
-R2(config)#write memory
+R2(config)#exit
+R2#wr
 ```
 - **SW1**:
 ```plaintext
@@ -903,7 +920,8 @@ SW1(config-if)#switchport mode trunk
 SW1(config-if)#switchport trunk allowed vlan 10,20
 SW1(config-if)#switchport trunk native vlan 10
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 **การทดสอบการทำงาน**:
