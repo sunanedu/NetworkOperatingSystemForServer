@@ -1,0 +1,1444 @@
+# ใบงานการตั้งค่าเครือข่ายใน Cisco Packet Tracer (v.8.2.2)
+
+เอกสารนี้ประกอบด้วยใบงานปฏิบัติการเครือข่ายสำหรับหัวข้อ VLAN, Inter-VLAN, IP Routing, DHCP, DHCP Snooping, Loop Guard, Spanning Tree, Link Aggregation, NAT และ Access Control List (ACL) โดยใช้ Cisco Packet Tracer v.8.2.2 ระดับความยากปานกลางถึงยาก
+
+---
+
+## 1. VLAN (มีจำนวน 5 ใบงาน)
+
+### ใบงาน 1.1: การสร้างและกำหนด VLAN พื้นฐาน
+**วัตถุประสงค์**: สร้าง VLAN 2 ตัวและกำหนดพอร์ตให้ PC ใน VLAN ที่แตกต่างกัน  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 4 เครื่อง (PC1, PC2, PC3, PC4)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW1 (Fa0/2)
+- PC3 --(Straight-through)--> SW1 (Fa0/3)
+- PC4 --(Straight-through)--> SW1 (Fa0/4)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC3: 192.168.20.2/24, Gateway: 192.168.20.1 (VLAN 20)
+- PC4: 192.168.20.3/24, Gateway: 192.168.20.1 (VLAN 20)
+
+**การกำหนดชื่อและการตั้งค่า**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name SALES
+SW1(config-vlan)#exit
+SW1(config)#vlan 20
+SW1(config-vlan)#name ENGINEERING
+SW1(config-vlan)#exit
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/3
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 20
+SW1(config-if)#exit
+SW1(config)#interface fa0/4
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 20
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show vlan brief` เพื่อยืนยันว่า VLAN 10 และ 20 มีพอร์ตที่กำหนดถูกต้อง
+- จาก PC1 ping PC2 (ควรสำเร็จ) และ ping PC3 (ควรล้มเหลว)
+- จาก PC3 ping PC4 (ควรสำเร็จ) และ ping PC1 (ควรล้มเหลว)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+[PC2 (VLAN 10)] -- [SW1 (Fa0/2)]
+[PC3 (VLAN 20)] -- [SW1 (Fa0/3)]
+[PC4 (VLAN 20)] -- [SW1 (Fa0/4)]
+```
+
+---
+
+### ใบงาน 1.2: การจัดการ VLAN ด้วย Trunk Link
+**วัตถุประสงค์**: ตั้งค่า VLAN และ Trunk Link ระหว่างสวิตช์ 2 ตัว  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 2960-24TT (2 ตัว, SW1, SW2)
+- PC: 4 เครื่อง (PC1, PC2, PC3, PC4)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW1 (Fa0/2)
+- PC3 --(Straight-through)--> SW2 (Fa0/1)
+- PC4 --(Straight-through)--> SW2 (Fa0/2)
+- SW1 (Fa0/24) --(Cross-over)--> SW2 (Fa0/24)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC3: 192.168.20.2/24, Gateway: 192.168.20.1 (VLAN 20)
+- PC4: 192.168.20.3/24, Gateway: 192.168.20.1 (VLAN 20)
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name SALES
+SW1(config-vlan)#exit
+SW1(config)#vlan 20
+SW1(config-vlan)#name ENGINEERING
+SW1(config-vlan)#exit
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/24
+SW1(config-if)#switchport mode trunk
+SW1(config-if)#switchport trunk allowed vlan 10,20
+SW1(config-if)#switchport trunk native vlan 10
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+- **SW2**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW2
+SW2(config)#vlan 10
+SW2(config-vlan)#name SALES
+SW2(config-vlan)#exit
+SW2(config)#vlan 20
+SW2(config-vlan)#name ENGINEERING
+SW2(config-vlan)#exit
+SW2(config)#interface fa0/1
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 20
+SW2(config-if)#exit
+SW2(config)#interface fa0/2
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 20
+SW2(config-if)#exit
+SW2(config)#interface fa0/24
+SW2(config-if)#switchport mode trunk
+SW2(config-if)#switchport trunk allowed vlan 10,20
+SW2(config-if)#switchport trunk native vlan 10
+SW2(config-if)#exit
+SW2(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show vlan brief` บน SW1 และ SW2 เพื่อยืนยัน VLAN และพอร์ต
+- ใช้คำสั่ง `show interfaces trunk` เพื่อยืนยันว่า Fa0/24 อนุญาต VLAN 10,20
+- จาก PC1 ping PC2 (ควรสำเร็จ) และ ping PC3 (ควรล้มเหลว)
+- จาก PC3 ping PC4 (ควรสำเร็จ) และ ping PC1 (ควรล้มเหลว)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+[PC2 (VLAN 10)] -- [SW1 (Fa0/2)]
+                    [SW1 (Fa0/24)] -- [SW2 (Fa0/24)]
+[PC3 (VLAN 20)] -- [SW2 (Fa0/1)]
+[PC4 (VLAN 20)] -- [SW2 (Fa0/2)]
+```
+
+---
+
+### ใบงาน 1.3: การกำหนด VLAN Management
+**วัตถุประสงค์**: ตั้งค่า VLAN Management เพื่อจัดการสวิตช์  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 1 เครื่อง (PC1)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.99.2/24, Gateway: 192.168.99.1
+- SW1: VLAN 99 = 192.168.99.1/24
+
+**การกำหนดชื่อและการตั้งค่า**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 99
+SW1(config-vlan)#name MANAGEMENT
+SW1(config-vlan)#exit
+SW1(config)#interface vlan 99
+SW1(config-if)#ip address 192.168.99.1 255.255.255.0
+SW1(config-if)#no shutdown
+SW1(config-if)#exit
+SW1(config)#ip default-gateway 192.168.99.1
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 99
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show vlan brief` เพื่อยืนยันว่า VLAN 99 มี Fa0/1
+- ใช้คำสั่ง `show ip interface brief` เพื่อยืนยันว่า VLAN 99 อยู่ในสถานะ up
+- จาก PC1 ping 192.168.99.1 (ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 99)] -- [SW1 (Fa0/1)]
+```
+
+---
+
+### ใบงาน 1.4: VLAN กับการจำกัดการเข้าถึง
+**วัตถุประสงค์**: จำกัดการสื่อสารระหว่าง VLAN โดยใช้ Access Port  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 4 เครื่อง (PC1, PC2, PC3, PC4)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW1 (Fa0/2)
+- PC3 --(Straight-through)--> SW1 (Fa0/3)
+- PC4 --(Straight-through)--> SW1 (Fa0/4)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC3: 192.168.30.2/24, Gateway: 192.168.30.1 (VLAN 30)
+- PC4: 192.168.30.3/24, Gateway: 192.168.30.1 (VLAN 30)
+
+**การกำหนดชื่อและการตั้งค่า**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name SALES
+SW1(config-vlan)#exit
+SW1(config)#vlan 30
+SW1(config-vlan)#name HR
+SW1(config-vlan)#exit
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/3
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 30
+SW1(config-if)#exit
+SW1(config)#interface fa0/4
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 30
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show vlan brief` เพื่อยืนยัน VLAN และพอร์ต
+- จาก PC1 ping PC2 (ควรสำเร็จ) และ ping PC3 (ควรล้มเหลว)
+- จาก PC3 ping PC4 (ควรสำเร็จ) และ ping PC1 (ควรล้มเหลว)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+[PC2 (VLAN 10)] -- [SW1 (Fa0/2)]
+[PC3 (VLAN 30)] -- [SW1 (Fa0/3)]
+[PC4 (VLAN 30)] -- [SW1 (Fa0/4)]
+```
+
+---
+
+### ใบงาน 1.5: การกำหนด VLAN ด้วย Voice VLAN
+**วัตถุประสงค์**: ตั้งค่า VLAN สำหรับ Data และ Voice  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 2 เครื่อง (PC1, PC2)
+- IP Phone: Cisco 7960 (2 ตัว, Phone1, Phone2)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> Phone1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> Phone2 --(Straight-through)--> SW1 (Fa0/2)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+- Phone1: 192.168.20.2/24, Gateway: 192.168.20.1 (VLAN 20)
+- Phone2: 192.168.20.3/24, Gateway: 192.168.20.1 (VLAN 20)
+
+**การกำหนดชื่อและการตั้งค่า**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name DATA
+SW1(config-vlan)#exit
+SW1(config)#vlan 20
+SW1(config-vlan)#name VOICE
+SW1(config-vlan)#exit
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#switchport voice vlan 20
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#switchport voice vlan 20
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show vlan brief` เพื่อยืนยันว่า VLAN 10 และ 20 มีพอร์ตที่กำหนด
+- จาก PC1 ping PC2 (ควรสำเร็จ)
+- ตรวจสอบว่า Phone1 และ Phone2 ได้รับ IP ใน VLAN 20 โดยใช้ `show running-config` หรือ GUI ของ IP Phone
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1] -- [Phone1 (VLAN 20)] -- [SW1 (Fa0/1, VLAN 10/20)]
+[PC2] -- [Phone2 (VLAN 20)] -- [SW1 (Fa0/2, VLAN 10/20)]
+```
+
+---
+
+## 2. Inter-VLAN (2 ใบงาน)
+
+### ใบงาน 2.1: Inter-VLAN Routing ด้วย Router-on-a-Stick
+**วัตถุประสงค์**: ตั้งค่า Inter-VLAN Routing โดยใช้ Router  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (1 ตัว, R1)
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 4 เครื่อง (PC1, PC2, PC3, PC4)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW1 (Fa0/2)
+- PC3 --(Straight-through)--> SW1 (Fa0/3)
+- PC4 --(Straight-through)--> SW1 (Fa0/4)
+- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC3: 192.168.20.2/24, Gateway: 192.168.20.1 (VLAN 20)
+- PC4: 192.168.20.3/24, Gateway: 192.168.20.1 (VLAN 20)
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0.10
+R1(config-subif)#encapsulation dot1Q 10
+R1(config-subif)#ip address 192.168.10.1 255.255.255.0
+R1(config-subif)#no shutdown
+R1(config-subif)#exit
+R1(config)#interface gi0/0.20
+R1(config-subif)#encapsulation dot1Q 20
+R1(config-subif)#ip address 192.168.20.1 255.255.255.0
+R1(config-subif)#no shutdown
+R1(config-subif)#exit
+R1(config)#interface gi0/0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#write memory
+```
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name SALES
+SW1(config-vlan)#exit
+SW1(config)#vlan 20
+SW1(config-vlan)#name ENGINEERING
+SW1(config-vlan)#exit
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/3
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 20
+SW1(config-if)#exit
+SW1(config)#interface fa0/4
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 20
+SW1(config-if)#exit
+SW1(config)#interface fa0/24
+SW1(config-if)#switchport mode trunk
+SW1(config-if)#switchport trunk allowed vlan 10,20
+SW1(config-if)#switchport trunk native vlan 10
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show vlan brief` บน SW1 เพื่อยืนยัน VLAN และพอร์ต
+- ใช้คำสั่ง `show ip interface brief` บน R1 เพื่อยืนยันว่า Gi0/0.10 และ Gi0/0.20 อยู่ในสถานะ up
+- จาก PC1 ping PC3 (ควรสำเร็จ)
+- จาก PC2 ping PC4 (ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+[PC2 (VLAN 10)] -- [SW1 (Fa0/2)]
+[PC3 (VLAN 20)] -- [SW1 (Fa0/3)]
+[PC4 (VLAN 20)] -- [SW1 (Fa0/4)]
+                    [SW1 (Fa0/24)] -- [R1 (Gi0/0)]
+```
+
+---
+
+### ใบงาน 2.2: Inter-VLAN Routing ด้วย Layer 3 Switch
+**วัตถุประสงค์**: ตั้งค่า Inter-VLAN Routing โดยใช้สวิตช์ Layer 3  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 3560-24PS (1 ตัว, SW1)
+- PC: 4 เครื่อง (PC1, PC2, PC3, PC4)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW1 (Fa0/2)
+- PC3 --(Straight-through)--> SW1 (Fa0/3)
+- PC4 --(Straight-through)--> SW1 (Fa0/4)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC3: 192.168.20.2/24, Gateway: 192.168.20.1 (VLAN 20)
+- PC4: 192.168.20.3/24, Gateway: 192.168.20.1 (VLAN 20)
+
+**การกำหนดชื่อและการตั้งค่า**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#ip routing
+SW1(config)#vlan 10
+SW1(config-vlan)#name SALES
+SW1(config-vlan)#exit
+SW1(config)#vlan 20
+SW1(config-vlan)#name ENGINEERING
+SW1(config-vlan)#exit
+SW1(config)#interface vlan 10
+SW1(config-if)#ip address 192.168.10.1 255.255.255.0
+SW1(config-if)#no shutdown
+SW1(config-if)#exit
+SW1(config)#interface vlan 20
+SW1(config-if)#ip address 192.168.20.1 255.255.255.0
+SW1(config-if)#no shutdown
+SW1(config-if)#exit
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/3
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 20
+SW1(config-if)#exit
+SW1(config)#interface fa0/4
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 20
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip route` บน SW1 เพื่อยืนยันว่า VLAN 10 และ 20 มีในตาราง Routing
+- ใช้คำสั่ง `show vlan brief` เพื่อยืนยัน VLAN และพอร์ต
+- จาก PC1 ping PC3 (ควรสำเร็จ)
+- จาก PC2 ping PC4 (ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+[PC2 (VLAN 10)] -- [SW1 (Fa0/2)]
+[PC3 (VLAN 20)] -- [SW1 (Fa0/3)]
+[PC4 (VLAN 20)] -- [SW1 (Fa0/4)]
+```
+
+---
+
+## 3. IP Routing (3 ใบงาน)
+
+### ใบงาน 3.1: Static Routing
+**วัตถุประสงค์**: ตั้งค่า Static Routing ระหว่างสองเครือข่าย  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (2 ตัว, R1, R2)
+- Switch: Cisco 2960-24TT (2 ตัว, SW1, SW2)
+- PC: 2 เครื่อง (PC1, PC2)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW2 (Fa0/1)
+- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+- SW2 (Fa0/24) --(Cross-over)--> R2 (Gi0/0)
+- R1 (Gi0/1) --(Cross-over)--> R2 (Gi0/1)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1
+- PC2: 192.168.20.2/24, Gateway: 192.168.20.1
+- R1: Gi0/0 = 192.168.10.1/24, Gi0/1 = 172.16.1.1/30
+- R2: Gi0/0 = 192.168.20.1/24, Gi0/1 = 172.16.1.2/30
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0
+R1(config-if)#ip address 192.168.10.1 255.255.255.0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#interface gi0/1
+R1(config-if)#ip address 172.16.1.1 255.255.255.252
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#ip route 192.168.20.0 255.255.255.0 172.16.1.2
+R1(config)#write memory
+```
+- **R2**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R2
+R2(config)#interface gi0/0
+R2(config-if)#ip address 192.168.20.1 255.255.255.0
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#interface gi0/1
+R2(config-if)#ip address 172.16.1.2 255.255.255.252
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#ip route 192.168.10.0 255.255.255.0 172.16.1.1
+R2(config)#write memory
+```
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#interface fa0/24
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+- **SW2**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW2
+SW2(config)#interface fa0/1
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 1
+SW2(config-if)#exit
+SW2(config)#interface fa0/24
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 1
+SW2(config-if)#exit
+SW2(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip route` บน R1 และ R2 เพื่อยืนยัน Static Route
+- จาก PC1 ping PC2 (192.168.20.2, ควรสำเร็จ)
+- จาก PC2 ping PC1 (192.168.10.2, ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1] -- [SW1 (Fa0/1)] -- [Fa0/24] -- [R1 (Gi0/0)]
+                                        [R1 (Gi0/1)] -- [R2 (Gi0/1)]
+[PC2] -- [SW2 (Fa0/1)] -- [Fa0/24] -- [R2 (Gi0/0)]
+```
+
+---
+
+### ใบงาน 3.2: RIP Routing
+**วัตถุประสงค์**: ตั้งค่า RIP เพื่อให้สองเครือข่ายสื่อสารกัน  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (2 ตัว, R1, R2)
+- Switch: Cisco 2960-24TT (2 ตัว, SW1, SW2)
+- PC: 2 เครื่อง (PC1, PC2)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW2 (Fa0/1)
+- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+- SW2 (Fa0/24) --(Cross-over)--> R2 (Gi0/0)
+- R1 (Gi0/1) --(Cross-over)--> R2 (Gi0/1)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1
+- PC2: 192.168.20.2/24, Gateway: 192.168.20.1
+- R1: Gi0/0 = 192.168.10.1/24, Gi0/1 = 172.16.1.1/30
+- R2: Gi0/0 = 192.168.20.1/24, Gi0/1 = 172.16.1.2/30
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0
+R1(config-if)#ip address 192.168.10.1 255.255.255.0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#interface gi0/1
+R1(config-if)#ip address 172.16.1.1 255.255.255.252
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#router rip
+R1(config-router)#version 2
+R1(config-router)#network 192.168.10.0
+R1(config-router)#network 172.16.1.0
+R1(config-router)#exit
+R1(config)#write memory
+```
+- **R2**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R2
+R2(config)#interface gi0/0
+R2(config-if)#ip address 192.168.20.1 255.255.255.0
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#interface gi0/1
+R2(config-if)#ip address 172.16.1.2 255.255.255.252
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#router rip
+R2(config-router)#version 2
+R2(config-router)#network 192.168.20.0
+R2(config-router)#network 172.16.1.0
+R2(config-router)#exit
+R2(config)#write memory
+```
+- **SW1** และ **SW2**: เหมือนกับใบงาน 3.1
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip route` บน R1 และ R2 เพื่อยืนยัน RIP Route
+- จาก PC1 ping PC2 (192.168.20.2, ควรสำเร็จ)
+- จาก PC2 ping PC1 (192.168.10.2, ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1] -- [SW1 (Fa0/1)] -- [Fa0/24] -- [R1 (Gi0/0)]
+                                        [R1 (Gi0/1)] -- [R2 (Gi0/1)]
+[PC2] -- [SW2 (Fa0/1)] -- [Fa0/24] -- [R2 (Gi0/0)]
+```
+
+---
+
+### ใบงาน 3.3: OSPF Routing
+**วัตถุประสงค์**: ตั้งค่า OSPF เพื่อให้สองเครือข่ายสื่อสารกัน  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (2 ตัว, R1, R2)
+- Switch: Cisco 2960-24TT (2 ตัว, SW1, SW2)
+- PC: 2 เครื่อง (PC1, PC2)
+
+**การเชื่อมต่อสาย**:
+- เหมือนกับใบงาน 3.2
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- เหมือนกับใบงาน 3.2
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0
+R1(config-if)#ip address 192.168.10.1 255.255.255.0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#interface gi0/1
+R1(config-if)#ip address 172.16.1.1 255.255.255.252
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#router ospf 1
+R1(config-router)#network 192.168.10.0 0.0.0.255 area 0
+R1(config-router)#network 172.16.1.0 0.0.0.3 area 0
+R1(config-router)#exit
+R1(config)#write memory
+```
+- **R2**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R2
+R2(config)#interface gi0/0
+R2(config-if)#ip address 192.168.20.1 255.255.255.0
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#interface gi0/1
+R2(config-if)#ip address 172.16.1.2 255.255.255.252
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#router ospf 1
+R2(config-router)#network 192.168.20.0 0.0.0.255 area 0
+R2(config-router)#network 172.16.1.0 0.0.0.3 area 0
+R2(config-router)#exit
+R2(config)#write memory
+```
+- **SW1** และ **SW2**: เหมือนกับใบงาน 3.1
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip ospf neighbor` เพื่อยืนยันว่า R1 และ R2 เป็น Neighbor
+- ใช้คำสั่ง `show ip route` เพื่อยืนยัน OSPF Route
+- จาก PC1 ping PC2 (192.168.20.2, ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1] -- [SW1 (Fa0/1)] -- [Fa0/24] -- [R1 (Gi0/0)]
+                                        [R1 (Gi0/1)] -- [R2 (Gi0/1)]
+[PC2] -- [SW2 (Fa0/1)] -- [Fa0/24] -- [R2 (Gi0/0)]
+```
+
+---
+
+## 4. DHCP (2 ใบงาน)
+
+### ใบงาน 4.1: DHCP Server บน Router
+**วัตถุประสงค์**: ตั้งค่า DHCP Server เพื่อแจก IP ให้ PC  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (1 ตัว, R1)
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 2 เครื่อง (PC1, PC2)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW1 (Fa0/2)
+- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: DHCP (คาดว่าได้ 192.168.10.2/24, Gateway: 192.168.10.1)
+- PC2: DHCP (คาดว่าได้ 192.168.10.3/24, Gateway: 192.168.10.1)
+- R1: Gi0/0 = 192.168.10.1/24
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0
+R1(config-if)#ip address 192.168.10.1 255.255.255.0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#ip dhcp pool LAN
+R1(dhcp-config)#network 192.168.10.0 255.255.255.0
+R1(dhcp-config)#default-router 192.168.10.1
+R1(dhcp-config)#exit
+R1(config)#write memory
+```
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#interface fa0/24
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip dhcp binding` บน R1 เพื่อยืนยันว่า PC1 และ PC2 ได้รับ IP
+- จาก PC1 และ PC2 รัน `ipconfig` เพื่อยืนยัน IP และ Gateway
+- จาก PC1 ping PC2 (ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1] -- [SW1 (Fa0/1)]
+[PC2] -- [SW1 (Fa0/2)]
+          [SW1 (Fa0/24)] -- [R1 (Gi0/0)]
+```
+
+---
+
+### ใบงาน 4.2: DHCP Relay Agent
+**วัตถุประสงค์**: ตั้งค่า DHCP Relay เพื่อให้ PC ใน VLAN ต่างๆ ได้รับ IP  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (2 ตัว, R1, R2)
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 2 เครื่อง (PC1, PC2)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW1 (Fa0/2)
+- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+- R1 (Gi0/1) --(Cross-over)--> R2 (Gi0/0)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: DHCP (คาดว่าได้ 192.168.10.2/24, Gateway: 192.168.10.1, VLAN 10)
+- PC2: DHCP (คาดว่าได้ 192.168.20.2/24, Gateway: 192.168.20.1, VLAN 20)
+- R1: Gi0/0.10 = 192.168.10.1/24, Gi0/0.20 = 192.168.20.1/24, Gi0/1 = 172.16.1.1/30
+- R2: Gi0/0 = 192.168.30.1/24
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0.10
+R1(config-subif)#encapsulation dot1Q 10
+R1(config-subif)#ip address 192.168.10.1 255.255.255.0
+R1(config-subif)#ip helper-address 192.168.30.1
+R1(config-subif)#no shutdown
+R1(config-subif)#exit
+R1(config)#interface gi0/0.20
+R1(config-subif)#encapsulation dot1Q 20
+R1(config-subif)#ip address 192.168.20.1 255.255.255.0
+R1(config-subif)#ip helper-address 192.168.30.1
+R1(config-subif)#no shutdown
+R1(config-subif)#exit
+R1(config)#interface gi0/0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#interface gi0/1
+R1(config-if)#ip address 172.16.1.1 255.255.255.252
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#ip route 192.168.30.0 255.255.255.0 172.16.1.2
+R1(config)#write memory
+```
+- **R2**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R2
+R2(config)#interface gi0/0
+R2(config-if)#ip address 192.168.30.1 255.255.255.0
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#ip dhcp pool VLAN10
+R2(dhcp-config)#network 192.168.10.0 255.255.255.0
+R2(dhcp-config)#default-router 192.168.10.1
+R2(dhcp-config)#exit
+R2(config)#ip dhcp pool VLAN20
+R2(dhcp-config)#network 192.168.20.0 255.255.255.0
+R2(dhcp-config)#default-router 192.168.20.1
+R2(dhcp-config)#exit
+R2(config)#interface gi0/1
+R2(config-if)#ip address 172.16.1.2 255.255.255.252
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#ip route 192.168.10.0 255.255.255.0 172.16.1.1
+R2(config)#ip route 192.168.20.0 255.255.255.0 172.16.1.1
+R2(config)#write memory
+```
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name SALES
+SW1(config-vlan)#exit
+SW1(config)#vlan 20
+SW1(config-vlan)#name ENGINEERING
+SW1(config-vlan)#exit
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 20
+SW1(config-if)#exit
+SW1(config)#interface fa0/24
+SW1(config-if)#switchport mode trunk
+SW1(config-if)#switchport trunk allowed vlan 10,20
+SW1(config-if)#switchport trunk native vlan 10
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip dhcp binding` บน R2 เพื่อยืนยันว่า PC1 และ PC2 ได้รับ IP
+- จาก PC1 และ PC2 รัน `ipconfig` เพื่อยืนยัน IP และ Gateway
+- จาก PC1 ping PC2 (ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+[PC2 (VLAN 20)] -- [SW1 (Fa0/2)]
+                    [SW1 (Fa0/24)] -- [R1 (Gi0/0)]
+                                        [R1 (Gi0/1)] -- [R2 (Gi0/0)]
+```
+
+---
+
+## 5. DHCP Snooping (2 ใบงาน)
+
+### ใบงาน 5.1: DHCP Snooping พื้นฐาน
+**วัตถุประสงค์**: ตั้งค่า DHCP Snooping เพื่อป้องกัน DHCP Server ปลอม  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (1 ตัว, R1)
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 3 เครื่อง (PC1, PC2, PC3)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW1 (Fa0/2)
+- PC3 --(Straight-through)--> SW1 (Fa0/3)
+- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: DHCP (คาดว่าได้ 192.168.10.2/24, Gateway: 192.168.10.1)
+- PC2: DHCP (คาดว่าได้ 192.168.10.3/24, Gateway: 192.168.10.1)
+- PC3: DHCP Server ปลอม (192.168.10.100/24)
+- R1: Gi0/0 = 192.168.10.1/24
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0
+R1(config-if)#ip address 192.168.10.1 255.255.255.0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#ip dhcp pool LAN
+R1(dhcp-config)#network 192.168.10.0 255.255.255.0
+R1(dhcp-config)#default-router 192.168.10.1
+R1(dhcp-config)#exit
+R1(config)#write memory
+```
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#ip dhcp snooping
+SW1(config)#ip dhcp snooping vlan 1
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#interface fa0/2
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#interface fa0/3
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#interface fa0/24
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#ip dhcp snooping trust
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip dhcp snooping` บน SW1 เพื่อยืนยันว่า Fa0/24 เป็น Trusted Port
+- ใช้คำสั่ง `show ip dhcp binding` บน R1 เพื่อยืนยันว่า PC1 และ PC2 ได้รับ IP
+- ตั้งค่า PC3 เป็น DHCP Server ปลอมและตรวจสอบว่า PC1 และ PC2 ยังได้รับ IP จาก R1
+- จาก PC1 ping PC2 (ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1] -- [SW1 (Fa0/1)]
+[PC2] -- [SW1 (Fa0/2)]
+[PC3] -- [SW1 (Fa0/3)]
+          [SW1 (Fa0/24)] -- [R1 (Gi0/0)]
+```
+
+---
+
+### ใบงาน 5.2: DHCP Snooping กับ VLAN
+**วัตถุประสงค์**: ตั้งค่า DHCP Snooping สำหรับหลาย VLAN  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (1 ตัว, R1)
+- Switch: Cisco 2960-24TT (2 ตัว, SW1, SW2)
+- PC: 3 เครื่อง (PC1, PC2, PC3)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW2 (Fa0/1)
+- PC3 --(Straight-through)--> SW2 (Fa0/2)
+- SW1 (Fa0/24) --(Cross-over)--> SW2 (Fa0/24)
+- SW1 (Fa0/23) --(Cross-over)--> R1 (Gi0/0)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: DHCP (คาดว่าได้ 192.168.10.2/24, Gateway: 192.168.10.1, VLAN 10)
+- PC2: DHCP (คาดว่าได้ 192.168.20.2/24, Gateway: 192.168.20.1, VLAN 20)
+- PC3: DHCP Server ปลอม (192.168.20.100/24, VLAN 20)
+- R1: Gi0/0.10 = 192.168.10.1/24, Gi0/0.20 = 192.168.20.1/24
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0.10
+R1(config-subif)#encapsulation dot1Q 10
+R1(config-subif)#ip address 192.168.10.1 255.255.255.0
+R1(config-subif)#no shutdown
+R1(config-subif)#exit
+R1(config)#interface gi0/0.20
+R1(config-subif)#encapsulation dot1Q 20
+R1(config-subif)#ip address 192.168.20.1 255.255.255.0
+R1(config-subif)#no shutdown
+R1(config-subif)#exit
+R1(config)#interface gi0/0
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#ip dhcp pool VLAN10
+R1(dhcp-config)#network 192.168.10.0 255.255.255.0
+R1(dhcp-config)#default-router 192.168.10.1
+R1(dhcp-config)#exit
+R1(config)#ip dhcp pool VLAN20
+R1(dhcp-config)#network 192.168.20.0 255.255.255.0
+R1(dhcp-config)#default-router 192.168.20.1
+R1(dhcp-config)#exit
+R1(config)#write memory
+```
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name SALES
+SW1(config-vlan)#exit
+SW1(config)#vlan 20
+SW1(config-vlan)#name ENGINEERING
+SW1(config-vlan)#exit
+SW1(config)#ip dhcp snooping
+SW1(config)#ip dhcp snooping vlan 10,20
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface fa0/23
+SW1(config-if)#switchport mode trunk
+SW1(config-if)#switchport trunk allowed vlan 10,20
+SW1(config-if)#switchport trunk native vlan 10
+SW1(config-if)#ip dhcp snooping trust
+SW1(config-if)#exit
+SW1(config)#interface fa0/24
+SW1(config-if)#switchport mode trunk
+SW1(config-if)#switchport trunk allowed vlan 10,20
+SW1(config-if)#switchport trunk native vlan 10
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+- **SW2**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW2
+SW2(config)#vlan 10
+SW2(config-vlan)#name SALES
+SW2(config-vlan)#exit
+SW2(config)#vlan 20
+SW2(config-vlan)#name ENGINEERING
+SW2(config-vlan)#exit
+SW2(config)#ip dhcp snooping
+SW2(config)#ip dhcp snooping vlan 10,20
+SW2(config)#interface fa0/1
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 20
+SW2(config-if)#exit
+SW2(config)#interface fa0/2
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 20
+SW2(config-if)#exit
+SW2(config)#interface fa0/24
+SW2(config-if)#switchport mode trunk
+SW2(config-if)#switchport trunk allowed vlan 10,20
+SW2(config-if)#switchport trunk native vlan 10
+SW2(config-if)#exit
+SW2(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip dhcp snooping` บน SW1 และ SW2 เพื่อยืนยันว่า Fa0/23 บน SW1 เป็น Trusted Port
+- ใช้คำสั่ง `show ip dhcp binding` บน R1 เพื่อยืนยันว่า PC1 และ PC2 ได้รับ IP
+- ตั้งค่า PC3 เป็น DHCP Server ปลอมและตรวจสอบว่า PC2 ยังได้รับ IP จาก R1
+- จาก PC1 ping PC2 (ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+                    [SW1 (Fa0/24)] -- [SW2 (Fa0/24)]
+[PC2 (VLAN 20)] -- [SW2 (Fa0/1)]
+[PC3 (VLAN 20)] -- [SW2 (Fa0/2)]
+                    [SW1 (Fa0/23)] -- [R1 (Gi0/0)]
+```
+
+---
+
+## 6. Loop Guard (1 ใบงาน)
+
+### ใบงาน 6.1: การตั้งค่า Loop Guard
+**วัตถุประสงค์**: ตั้งค่า Loop Guard เพื่อป้องกัน Loop ในเครือข่าย  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 3560-24PS (2 ตัว, SW1, SW2)
+- PC: 2 เครื่อง (PC1, PC2)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW2 (Fa0/1)
+- SW1 (Fa0/23) --(Cross-over)--> SW2 (Fa0/23)
+- SW1 (Fa0/24) --(Cross-over)--> SW2 (Fa0/24)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name LAN
+SW1(config-vlan)#exit
+SW1(config)#spanning-tree mode rapid-pvst
+SW1(config)#spanning-tree vlan 10 priority 4096
+SW1(config)#spanning-tree loopguard default
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface range fa0/23 - 24
+SW1(config-if-range)#switchport mode trunk
+SW1(config-if-range)#switchport trunk allowed vlan 10
+SW1(config-if-range)#switchport trunk native vlan 10
+SW1(config-if-range)#exit
+SW1(config)#write memory
+```
+- **SW2**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW2
+SW2(config)#vlan 10
+SW2(config-vlan)#name LAN
+SW2(config-vlan)#exit
+SW2(config)#spanning-tree mode rapid-pvst
+SW2(config)#spanning-tree vlan 10 priority 8192
+SW2(config)#spanning-tree loopguard default
+SW2(config)#interface fa0/1
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 10
+SW2(config-if)#exit
+SW2(config)#interface range fa0/23 - 24
+SW2(config-if-range)#switchport mode trunk
+SW2(config-if-range)#switchport trunk allowed vlan 10
+SW2(config-if-range)#switchport trunk native vlan 10
+SW2(config-if-range)#exit
+SW2(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show spanning-tree vlan 10` เพื่อยืนยันว่า SW1 เป็น Root Bridge และ Fa0/24 บน SW2 อยู่ในสถานะ Blocking
+- ปิดการส่ง BPDU บน SW2 (Fa0/23) โดยใช้ `spanning-tree bpdufilter enable` และตรวจสอบว่า Loop Guard ทำให้พอร์ตเข้าสู่สถานะ Err-disabled
+- จาก PC1 ping PC2 (ควรสำเร็จก่อนและหลังการทดสอบ Loop Guard)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)] -- [Fa0/24] -- [SW2 (Fa0/24)] -- [PC2 (VLAN 10)]
+                    |                                  |
+                    +----[Fa0/23]----[Fa0/23]--+
+```
+
+---
+
+## 7. Spanning Tree (1 ใบงาน)
+
+### ใบงาน 7.1: Rapid Per-VLAN Spanning Tree (RPVST)
+**วัตถุประสงค์**: ตั้งค่า RPVST เพื่อป้องกัน Loop  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 2960-24TT (2 ตัว, SW1, SW2)
+- PC: 2 เครื่อง (PC1, PC2)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW2 (Fa0/1)
+- SW1 (Fa0/23) --(Cross-over)--> SW2 (Fa0/23)
+- SW1 (Fa0/24) --(Cross-over)--> SW2 (Fa0/24)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name LAN
+SW1(config-vlan)#exit
+SW1(config)#spanning-tree mode rapid-pvst
+SW1(config)#spanning-tree vlan 10 priority 4096
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface range fa0/23 - 24
+SW1(config-if-range)#switchport mode trunk
+SW1(config-if-range)#switchport trunk allowed vlan 10
+SW1(config-if-range)#switchport trunk native vlan 10
+SW1(config-if-range)#exit
+SW1(config)#write memory
+```
+- **SW2**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW2
+SW2(config)#vlan 10
+SW2(config-vlan)#name LAN
+SW2(config-vlan)#exit
+SW2(config)#spanning-tree mode rapid-pvst
+SW2(config)#spanning-tree vlan 10 priority 8192
+SW2(config)#interface fa0/1
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 10
+SW2(config-if)#exit
+SW2(config)#interface range fa0/23 - 24
+SW2(config-if-range)#switchport mode trunk
+SW2(config-if-range)#switchport trunk allowed vlan 10
+SW2(config-if-range)#switchport trunk native vlan 10
+SW2(config-if-range)#exit
+SW2(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show spanning-tree vlan 10` เพื่อยืนยันว่า SW1 เป็น Root Bridge และ Fa0/24 บน SW2 อยู่ในสถานะ Blocking
+- จาก PC1 ping PC2 (ควรสำเร็จ)
+- ปิดพอร์ต Fa0/23 บน SW2 และตรวจสอบว่า Fa0/24 เปลี่ยนเป็น Forwarding
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)] -- [Fa0/24] -- [SW2 (Fa0/24)] -- [PC2 (VLAN 10)]
+                    |                                  |
+                    +----[Fa0/23]----[Fa0/23]--+
+```
+
+---
+
+## 8. Link Aggregation (1 ใบงาน)
+
+### ใบงาน 8.1: EtherChannel (LACP)
+**วัตถุประสงค์**: ตั้งค่า EtherChannel เพื่อเพิ่มแบนด์วิดท์ระหว่างสวิตช์  
+**อุปกรณ์ที่ใช้**:
+- Switch: Cisco 2960-24TT (2 ตัว, SW1, SW2)
+- PC: 2 เครื่อง (PC1, PC2)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- PC2 --(Straight-through)--> SW2 (Fa0/1)
+- SW1 (Fa0/23) --(Cross-over)--> SW2 (Fa0/23)
+- SW1 (Fa0/24) --(Cross-over)--> SW2 (Fa0/24)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
+- PC2: 192.168.10.3/24, Gateway: 192.168.10.1 (VLAN 10)
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#vlan 10
+SW1(config-vlan)#name LAN
+SW1(config-vlan)#exit
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 10
+SW1(config-if)#exit
+SW1(config)#interface range fa0/23 - 24
+SW1(config-if-range)#channel-group 1 mode active
+SW1(config-if-range)#switchport mode trunk
+SW1(config-if-range)#switchport trunk allowed vlan 10
+SW1(config-if-range)#switchport trunk native vlan 10
+SW1(config-if-range)#exit
+SW1(config)#write memory
+```
+- **SW2**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW2
+SW2(config)#vlan 10
+SW2(config-vlan)#name LAN
+SW2(config-vlan)#exit
+SW2(config)#interface fa0/1
+SW2(config-if)#switchport mode access
+SW2(config-if)#switchport access vlan 10
+SW2(config-if)#exit
+SW2(config)#interface range fa0/23 - 24
+SW2(config-if-range)#channel-group 1 mode active
+SW2(config-if-range)#switchport mode trunk
+SW2(config-if-range)#switchport trunk allowed vlan 10
+SW2(config-if-range)#switchport trunk native vlan 10
+SW2(config-if-range)#exit
+SW2(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show etherchannel summary` เพื่อยืนยันว่า Port-channel 1 ทำงาน
+- จาก PC1 ping PC2 (ควรสำเร็จ)
+- ปิดพอร์ต Fa0/23 บน SW1 และตรวจสอบว่า ping ยังทำงานได้ (EtherChannel ยังคงทำงานผ่าน Fa0/24)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)] -- [Fa0/24 (EtherChannel)] -- [SW2 (Fa0/24)] -- [PC2 (VLAN 10)]
+                    |                                     |
+                    +----[Fa0/23 (EtherChannel)]----[Fa0/23]--+
+```
+
+---
+
+## 9. NAT (2 ใบงาน)
+
+### ใบงาน 9.1: Static NAT
+**วัตถุประสงค์**: ตั้งค่า Static NAT เพื่อให้ PC เข้าถึงเครือข่ายภายนอก  
+**อุปกรณ์ที่ใช้**:
+- Router: Cisco 2911 (2 ตัว, R1, R2)
+- Switch: Cisco 2960-24TT (1 ตัว, SW1)
+- PC: 1 เครื่อง (PC1)
+- Server: 1 เครื่อง (Server1)
+
+**การเชื่อมต่อสาย**:
+- PC1 --(Straight-through)--> SW1 (Fa0/1)
+- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+- R1 (Gi0/1) --(Cross-over)--> R2 (Gi0/0)
+- Server1 --(Straight-through)--> R2 (Gi0/1)
+
+**การกำหนด IP Address, Subnet, Gateway**:
+- PC1: 192.168.10.2/24, Gateway: 192.168.10.1
+- Server1: 203.0.113.2/24, Gateway: 203.0.113.1
+- R1: Gi0/0 = 192.168.10.1/24, Gi0/1 = 172.16.1.1/30
+- R2: Gi0/0 = 172.16.1.2/30, Gi0/1 = 203.0.113.1/24
+
+**การกำหนดชื่อและการตั้งค่า**:
+- **R1**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R1
+R1(config)#interface gi0/0
+R1(config-if)#ip address 192.168.10.1 255.255.255.0
+R1(config-if)#ip nat inside
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#interface gi0/1
+R1(config-if)#ip address 172.16.1.1 255.255.255.252
+R1(config-if)#ip nat outside
+R1(config-if)#no shutdown
+R1(config-if)#exit
+R1(config)#ip nat inside source static 192.168.10.2 172.16.1.3
+R1(config)#ip route 203.0.113.0 255.255.255.0 172.16.1.2
+R1(config)#write memory
+```
+- **R2**:
+```plaintext
+Router>enable
+Router#configure terminal
+Router(config)#hostname R2
+R2(config)#interface gi0/0
+R2(config-if)#ip address 172.16.1.2 255.255.255.252
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#interface gi0/1
+R2(config-if)#ip address 203.0.113.1 255.255.255.0
+R2(config-if)#no shutdown
+R2(config-if)#exit
+R2(config)#ip route 172.16.1.3 255.255.255.255 172.16.1.1
+R2(config)#write memory
+```
+- **SW1**:
+```plaintext
+Switch>enable
+Switch#configure terminal
+Switch(config)#hostname SW1
+SW1(config)#interface fa0/1
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#interface fa0/24
+SW1(config-if)#switchport mode access
+SW1(config-if)#switchport access vlan 1
+SW1(config-if)#exit
+SW1(config)#write memory
+```
+
+**การทดสอบการทำงาน**:
+- ใช้คำสั่ง `show ip nat translations` บน R1 เพื่อยืนยัน Static NAT
+- จาก PC1 ping Server1 (203.0.113.2, ควรสำเร็จ)
+- จาก Server1 ping 172.16.1.3 (ควรสำเร็จ)
+
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1] -- [SW1 (Fa0/1)] -- [Fa0/24] -- [R1 (Gi0/0)]
+                                        [R1 (Gi0/1)] -- [R2 (Gi0/0)]
+[Server1] -- [R2 (Gi0/1)]
+```
+
+---
+
+### ใบงาน 9.2: Dynamic NAT
+**วัตถุประสงค์**: ตั้งค่า Dynamic NAT เพื่อให้ PC เข้าถึงเครือข่ายภายนอก  
+**อุปกรณ์ที่ใช้**:
+-
