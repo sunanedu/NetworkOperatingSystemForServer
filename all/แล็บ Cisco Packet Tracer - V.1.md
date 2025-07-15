@@ -272,7 +272,7 @@ SW1#wr
 
 ---
 
-1.5: การกำหนด VLAN ด้วย Voice VLAN
+###  1.5: การกำหนด VLAN ด้วย Voice VLAN
 
 **วัตถุประสงค์**:  
 ตั้งค่า VLAN สำหรับ Data (VLAN 10) และ Voice (VLAN 20) โดยให้ PC อยู่ใน VLAN 10 และ IP Phone อยู่ใน VLAN 20 พร้อมทั้งตั้งค่า DHCP เพื่อแจก IP Address ให้ IP Phone และทดสอบการทำงานของ Voice VLAN
@@ -324,12 +324,14 @@ SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 10
 SW1(config-if)#switchport voice vlan 20
 SW1(config-if)#exit
+(เพิ่ม)
 SW1(config)#interface fa0/24
 SW1(config-if)#switchport mode trunk
 SW1(config-if)#switchport trunk allowed vlan 10,20
 SW1(config-if)#switchport trunk native vlan 10
 SW1(config-if)#exit
-SW1(config)#write memory
+SW1(config)#exit
+SW1#wr
 ```
 
 ### การตั้งค่า R1 (DHCP Server และ Inter-VLAN Routing)
@@ -359,7 +361,8 @@ R1(dhcp-config)#network 192.168.20.0 255.255.255.0
 R1(dhcp-config)#default-router 192.168.20.1
 R1(dhcp-config)#option 150 ip 192.168.20.1
 R1(dhcp-config)#exit
-R1(config)#write memory
+R1(config)#exit
+R1#wr
 ```
 
 ### การตั้งค่า PC1 และ PC2
