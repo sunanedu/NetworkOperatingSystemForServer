@@ -729,6 +729,9 @@ SW1#wr
 - SW2 (Fa0/24) --(Cross-over)--> R2 (Gi0/0)
 - R1 (Gi0/1) --(Cross-over)--> R2 (Gi0/1)
 
+### ภาพไดอะแกรม
+![ตัวอย่าง VLAN](3.1.png)
+
 **การกำหนด IP Address, Subnet, Gateway**:
 - PC1: 192.168.10.2/24, Gateway: 192.168.10.1
 - PC2: 192.168.20.2/24, Gateway: 192.168.20.1
