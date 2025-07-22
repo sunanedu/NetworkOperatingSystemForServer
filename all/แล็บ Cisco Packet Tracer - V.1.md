@@ -171,6 +171,12 @@ SW2#wr
 **การเชื่อมต่อสาย**:
 - PC1 --(Straight-through)--> SW1 (Fa0/1)
 
+### ภาพไดอะแกรม
+
+![ตัวอย่าง VLAN](1.3-ip.png)
+
+![ตัวอย่าง VLAN](1.3-ping.png)
+
 **การกำหนด IP Address, Subnet, Gateway**:
 - PC1: 192.168.99.2/24, Gateway: 192.168.99.1
 - SW1: VLAN 99 = 192.168.99.1/24
@@ -291,6 +297,12 @@ SW1#wr
 - PC1 --(Straight-through)--> Phone1 (พอร์ต PC) --(Straight-through)--> SW1 (Fa0/1)
 - PC2 --(Straight-through)--> Phone2 (พอร์ต PC) --(Straight-through)--> SW1 (Fa0/2)
 - SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+
+
+### ภาพไดอะแกรม
+
+![ตัวอย่าง VLAN](1.5.png)
+
 
 ## การกำหนด IP Address, Subnet, Gateway
 - **PC1**: 192.168.10.2/24, Gateway: 192.168.10.1 (VLAN 10)
