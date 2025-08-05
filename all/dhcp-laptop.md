@@ -16,24 +16,23 @@ VLAN 20 (VLAN_LAPTOP): สำหรับ Laptop ที่เชื่อมต�
 Wireless: Laptop จะเชื่อมต่อกับเครือข่ายผ่าน Access Point
 
 ## 2. การออกแบบ IP Address และ VLAN
-ตารางออกแบบ IP Address และ VLAN
-อุปกรณ์	Interface	เครือข่าย / VLAN	IP Address	Subnet Mask	Gateway	หมายเหตุ
-ลิงก์ระหว่าง Router (WAN)			10.0.0.0/30			
-R1	GigabitEthernet0/0	WAN	10.0.0.1	255.255.255.252	-	
-R2	GigabitEthernet0/0	WAN	10.0.0.2	255.255.255.252	-	
-เครือข่ายที่ 1 (Network A)						
-R1	GigabitEthernet0/1.10	VLAN 10 (PC)	192.168.10.1	255.255.255.0	-	Gateway สำหรับ PC1
-R1	GigabitEthernet0/1.20	VLAN 20 (Laptop)	192.168.20.1	255.255.255.0	-	Gateway สำหรับ Laptop1
-PC1	Ethernet0	VLAN 10 (PC)	DHCP	DHCP	DHCP	
-Laptop1	Wireless0	VLAN 20 (Laptop)	DHCP	DHCP	DHCP	
-เครือข่ายที่ 2 (Network B)						
-R2	GigabitEthernet0/1.10	VLAN 10 (PC)	192.168.30.1	255.255.255.0	-	Gateway สำหรับ PC2
-R2	GigabitEthernet0/1.20	VLAN 20 (Laptop)	192.168.40.1	255.255.255.0	-	Gateway สำหรับ Laptop2
-PC2	Ethernet0	VLAN 10 (PC)	DHCP	DHCP	DHCP	
-Laptop2	Wireless0	VLAN 20 (Laptop)	DHCP	DHCP	DHCP	
+### ตารางออกแบบ IP Address และ VLAN
 
-ส่งออกไปยังชีต
-
+| อุปกรณ์ | Interface | เครือข่าย / VLAN | IP Address | Subnet Mask | Gateway | หมายเหตุ |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **ลิงก์ระหว่าง Router (WAN)** | | | **`10.0.0.0/30`** | | | |
+| R1 | `GigabitEthernet0/0` | WAN | `10.0.0.1` | `255.255.255.252` | - | |
+| R2 | `GigabitEthernet0/0` | WAN | `10.0.0.2` | `255.255.255.252` | - | |
+| **เครือข่ายที่ 1 (Network A)** | | | | | | |
+| R1 | `GigabitEthernet0/1.10` | VLAN 10 (PC) | `192.168.10.1` | `255.255.255.0` | - | Gateway สำหรับ PC1 |
+| R1 | `GigabitEthernet0/1.20` | VLAN 20 (Laptop) | `192.168.20.1` | `255.255.255.0` | - | Gateway สำหรับ Laptop1 |
+| PC1 | `Ethernet0` | VLAN 10 (PC) | DHCP | DHCP | DHCP | |
+| Laptop1 | `Wireless0` | VLAN 20 (Laptop) | DHCP | DHCP | DHCP | |
+| **เครือข่ายที่ 2 (Network B)** | | | | | | |
+| R2 | `GigabitEthernet0/1.10` | VLAN 10 (PC) | `192.168.30.1` | `255.255.255.0` | - | Gateway สำหรับ PC2 |
+| R2 | `GigabitEthernet0/1.20` | VLAN 20 (Laptop) | `192.168.40.1` | `255.255.255.0` | - | Gateway สำหรับ Laptop2 |
+| PC2 | `Ethernet0` | VLAN 10 (PC) | DHCP | DHCP | DHCP | |
+| Laptop2 | `Wireless0` | VLAN 20 (Laptop) | DHCP | DHCP | DHCP | |
 
 ## 3. รูปแบบการเชื่อมต่ออุปกรณ์ (แบบ Text)
 
