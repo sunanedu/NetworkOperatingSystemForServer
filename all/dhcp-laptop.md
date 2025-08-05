@@ -68,6 +68,8 @@ Wireless: Laptop จะเชื่อมต่อกับเครือข่
 5\. Lapttop-pt  x2
 
 
+![ภาพไดอะแกรม](dhcp-laptop.png)
+
 ### 4.1 เครือข่ายที่ 1 (Network A)
 
 #### **Router (R1)**
