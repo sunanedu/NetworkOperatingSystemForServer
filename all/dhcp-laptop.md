@@ -59,6 +59,14 @@ Wireless: Laptop จะเชื่อมต่อกับเครือข่
   * `SW2 (FastEthernet0/2)` <--> `AP2 (Port 0)`
 
 ## 4. คำสั่งการตั้งค่า (Configuration Commands)
+รายการอุปกรณ์
+
+1\. router 2911 x2
+2\. swich 24tt  x2
+3\. accesspoint - pt  x2
+4\. pc  x2
+5\. Lapttop-pt  x2
+
 
 ### 4.1 เครือข่ายที่ 1 (Network A)
 
