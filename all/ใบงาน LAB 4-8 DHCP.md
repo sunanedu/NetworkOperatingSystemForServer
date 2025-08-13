@@ -302,7 +302,8 @@ R1# copy running-config startup-config
 Destination filename [startup-config]?    <-- กด Enter
 Building configuration...
 [OK]
-R1#
+R1# 
+R1# show ip dhcp binding     <-- รันตอนตั้งค่าเสร็จทั้งหมด
 ```
 - **SW1**:
 ```powershell
@@ -320,7 +321,6 @@ SW1(config)# interface range fastethernet0/1 - 3
 SW1(config-if-range)# switchport mode access
 SW1(config-if-range)# switchport access vlan 1
 SW1(config-if-range)# exit
-SW1(config-if)# exit
 
 ความหมายคำสั่ง Configure the port connected to the legitimate DHCP Server (R1)
 SW1(config)# interface gigabitethernet0/1
@@ -338,6 +338,7 @@ Destination filename [startup-config]?    <-- กด Enter
 Building configuration...
 [OK]
 SW1#
+SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเสร็จทั้งหมด
 ```
 
 **การทดสอบการทำงาน**:
