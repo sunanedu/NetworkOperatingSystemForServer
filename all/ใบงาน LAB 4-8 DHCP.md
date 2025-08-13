@@ -316,19 +316,10 @@ SW1(config)# ip dhcp snooping
 SW1(config)# ip dhcp snooping vlan 1
 
 ความหมายคำสั่ง Configure ports for client PCs (these are Untrusted by default)
-SW1(config)# interface fastethernet0/1
-SW1(config-if)# switchport mode access
-SW1(config-if)# switchport access vlan 1
-SW1(config-if)# exit
-
-SW1(config)# interface fastethernet0/2
-SW1(config-if)# switchport mode access
-SW1(config-if)# switchport access vlan 1
-SW1(config-if)# exit
-
-SW1(config)# interface fastethernet0/3
-SW1(config-if)# switchport mode access
-SW1(config-if)# switchport access vlan 1
+SW1(config)# interface range fastethernet0/1 - 3
+SW1(config-if-range)# switchport mode access
+SW1(config-if-range)# switchport access vlan 1
+SW1(config-if-range)# exit
 SW1(config-if)# exit
 
 ความหมายคำสั่ง Configure the port connected to the legitimate DHCP Server (R1)
