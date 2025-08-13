@@ -100,7 +100,7 @@ SW1#wr
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```yaml
+```powershell
 Would you like to enter the initial configuration dialog? [yes/no]: no
 Router>enable
 Router#configure terminal
