@@ -148,7 +148,7 @@ R1(config)# ip route 192.168.30.0 255.255.255.0 172.16.1.2
 R1(config)# exit
 
 R1# copy running-config startup-config
-Destination filename [startup-config]? 
+Destination filename [startup-config]?    <-- กด Enter
 Building configuration...
 [OK]
 R1#
@@ -195,7 +195,7 @@ R2(config)# ip route 192.168.20.0 255.255.255.0 172.16.1.1
 R2(config)# exit
 
 R2# copy running-config startup-config
-Destination filename [startup-config]? 
+Destination filename [startup-config]?    <-- กด Enter
 Building configuration...
 [OK]
 R2#
@@ -237,7 +237,7 @@ SW1(config-if)# exit
 SW1(config)# exit
 
 SW1# copy running-config startup-config
-Destination filename [startup-config]? 
+Destination filename [startup-config]?    <-- กด Enter
 Building configuration...
 [OK]
 SW1#
@@ -283,13 +283,13 @@ Router# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Router(config)# hostname R1
 
-!! Configure the gateway interface
+ความหมายคำสั่ง Configure the gateway interface
 R1(config)# interface gigabitethernet0/0
 R1(config-if)# ip address 192.168.10.1 255.255.255.0
 R1(config-if)# no shutdown
 R1(config-if)# exit
 
-!! Configure the DHCP pool for clients
+ความหมายคำสั่ง Configure the DHCP pool for clients
 R1(config)# ip dhcp pool LAN
 R1(dhcp-config)# network 192.168.10.0 255.255.255.0
 R1(dhcp-config)# default-router 192.168.10.1
@@ -298,7 +298,7 @@ R1(dhcp-config)# exit
 R1(config)# exit
 
 R1# copy running-config startup-config
-Destination filename [startup-config]? 
+Destination filename [startup-config]?    <-- กด Enter
 Building configuration...
 [OK]
 R1#
@@ -310,11 +310,11 @@ Switch# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Switch(config)# hostname SW1
 
-!! Enable DHCP Snooping globally and for VLAN 1
+ความหมายคำสั่ง Enable DHCP Snooping globally and for VLAN 1
 SW1(config)# ip dhcp snooping
 SW1(config)# ip dhcp snooping vlan 1
 
-!! Configure ports for client PCs (these are Untrusted by default)
+ความหมายคำสั่ง Configure ports for client PCs (these are Untrusted by default)
 SW1(config)# interface fastethernet0/1
 SW1(config-if)# switchport mode access
 SW1(config-if)# switchport access vlan 1
@@ -330,19 +330,19 @@ SW1(config-if)# switchport mode access
 SW1(config-if)# switchport access vlan 1
 SW1(config-if)# exit
 
-!! Configure the port connected to the legitimate DHCP Server (R1)
+ความหมายคำสั่ง Configure the port connected to the legitimate DHCP Server (R1)
 SW1(config)# interface gigabitethernet0/1
 SW1(config-if)# switchport mode access
 SW1(config-if)# switchport access vlan 1
 
-!! Set this port as trusted to allow DHCP server messages
+ความหมายคำสั่ง Set this port as trusted to allow DHCP server messages
 SW1(config-if)# ip dhcp snooping trust
 SW1(config-if)# exit
 
 SW1(config)# exit
 
 SW1# copy running-config startup-config
-Destination filename [startup-config]? 
+Destination filename [startup-config]?    <-- กด Enter
 Building configuration...
 [OK]
 SW1#
@@ -393,7 +393,7 @@ Router# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Router(config)# hostname R1
 
-! Configure sub-interfaces for VLANs
+ความหมายคำสั่ง Configure sub-interfaces for VLANs
 R1(config)# interface gigabitethernet0/0.10
 R1(config-subif)# encapsulation dot1Q 10
 R1(config-subif)# ip address 192.168.10.1 255.255.255.0
@@ -406,12 +406,12 @@ R1(config-subif)# ip address 192.168.20.1 255.255.255.0
 R1(config-subif)# no shutdown
 R1(config-subif)# exit
 
-! Turn on the physical interface
+ความหมายคำสั่ง Turn on the physical interface
 R1(config)# interface gigabitethernet0/0
 R1(config-if)# no shutdown
 R1(config-if)# exit
 
-! Configure DHCP pools
+ความหมายคำสั่ง Configure DHCP pools
 R1(config)# ip dhcp pool VLAN10
 R1(dhcp-config)# network 192.168.10.0 255.255.255.0
 R1(dhcp-config)# default-router 192.168.10.1
@@ -437,7 +437,7 @@ Switch# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Switch(config)# hostname SW1
 
-! Create VLANs
+ความหมายคำสั่ง Create VLANs
 SW1(config)# vlan 10
 SW1(config-vlan)# name SALES
 SW1(config-vlan)# exit
@@ -445,36 +445,38 @@ SW1(config)# vlan 20
 SW1(config-vlan)# name ENGINEERING
 SW1(config-vlan)# exit
 
-! Enable DHCP Snooping globally and for specific VLANs
+ความหมายคำสั่ง Enable DHCP Snooping globally and for specific VLANs
 SW1(config)# ip dhcp snooping
 SW1(config)# ip dhcp snooping vlan 10,20
 
-! Configure access port for PC1 (Untrusted by default)
+ความหมายคำสั่ง Configure access port for PC1 (Untrusted by default)
 SW1(config)# interface fastethernet0/1
 SW1(config-if)# switchport mode access
 SW1(config-if)# switchport access vlan 10
 SW1(config-if)# exit
 
-! Configure trunk port to R1 (DHCP Server)
+ความหมายคำสั่ง Configure trunk port to R1 (DHCP Server)
 SW1(config)# interface fastethernet0/23
 SW1(config-if)# switchport mode trunk
 SW1(config-if)# switchport trunk allowed vlan 10,20
-! Set this port as trusted because it leads to the legitimate DHCP server
+
+ความหมายคำสั่ง Set this port as trusted because it leads to the legitimate DHCP server
 SW1(config-if)# ip dhcp snooping trust
 SW1(config-if)# exit
 
-! Configure trunk port to SW2
+ความหมายคำสั่ง Configure trunk port to SW2
 SW1(config)# interface fastethernet0/24
 SW1(config-if)# switchport mode trunk
 SW1(config-if)# switchport trunk allowed vlan 10,20
-! This trunk must also be trusted to pass DHCP replies to SW2
+
+ความหมายคำสั่ง This trunk must also be trusted to pass DHCP replies to SW2
 SW1(config-if)# ip dhcp snooping trust
 SW1(config-if)# exit
 
 SW1(config)# exit
 
 SW1# copy running-config startup-config
-Destination filename [startup-config]? 
+Destination filename [startup-config]?   <-- กด Enter 
 Building configuration...
 [OK]
 SW1#
@@ -486,7 +488,7 @@ Switch# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Switch(config)# hostname SW2
 
-! Create VLANs
+ความหมายคำสั่ง Create VLANs
 SW2(config)# vlan 10
 SW2(config-vlan)# name SALES
 SW2(config-vlan)# exit
@@ -494,34 +496,34 @@ SW2(config)# vlan 20
 SW2(config-vlan)# name ENGINEERING
 SW2(config-vlan)# exit
 
-! Enable DHCP Snooping globally and for specific VLANs
+ความหมายคำสั่ง Enable DHCP Snooping globally and for specific VLANs
 SW2(config)# ip dhcp snooping
 SW2(config)# ip dhcp snooping vlan 10,20
 
-! Configure access port for PC2 (Untrusted by default)
+ความหมายคำสั่ง Configure access port for PC2 (Untrusted by default)
 SW2(config)# interface fastethernet0/1
 SW2(config-if)# switchport mode access
 SW2(config-if)# switchport access vlan 20
 SW2(config-if)# exit
 
-! Configure access port for Rogue DHCP Server (Untrusted by default)
+ความหมายคำสั่ง Configure access port for Rogue DHCP Server (Untrusted by default)
 SW2(config)# interface fastethernet0/2
 SW2(config-if)# switchport mode access
 SW2(config-if)# switchport access vlan 20
 SW2(config-if)# exit
 
-! Configure trunk port to SW1
+ความหมายคำสั่ง Configure trunk port to SW1
 SW2(config)# interface fastethernet0/24
 SW2(config-if)# switchport mode trunk
 SW2(config-if)# switchport trunk allowed vlan 10,20
-! This trunk must be trusted to allow DHCP replies from SW1 to reach clients
+ความหมายคำสั่ง This trunk must be trusted to allow DHCP replies from SW1 to reach clients
 SW2(config-if)# ip dhcp snooping trust
 SW2(config-if)# exit
 
 SW2(config)# exit
 
 SW2# copy running-config startup-config
-Destination filename [startup-config]? 
+Destination filename [startup-config]?   <-- กด Enter 
 Building configuration...
 [OK]
 SW2#
