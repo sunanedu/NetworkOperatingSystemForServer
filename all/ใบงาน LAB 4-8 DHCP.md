@@ -72,6 +72,8 @@ SW1#wr
 - จาก PC1 และ PC2 รัน `ipconfig` เพื่อยืนยัน IP และ Gateway
 - จาก PC1 ping PC2 (ควรสำเร็จ)
 
+![ping pc1-pc2](4.1-2.png)
+
 ---
 
 ### ใบงาน 4.2: DHCP Relay Agent
