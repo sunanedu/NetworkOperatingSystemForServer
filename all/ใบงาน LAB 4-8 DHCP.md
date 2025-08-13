@@ -425,6 +425,17 @@ SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเส
 - Server-PT: DHCP Server ปลอม (192.168.20.100/24, VLAN 20)
 - R1: Gi0/0.10 = 192.168.10.1/24, Gi0/0.20 = 192.168.20.1/24
 
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+                    [SW1 (Fa0/24)] -- [SW2 (Fa0/24)]
+[PC2 (VLAN 20)] -- [SW2 (Fa0/1)]
+[PC3 (VLAN 20)] -- [SW2 (Fa0/2)]
+                    [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
+```
+
+![dhcp](5.2.png)
+
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
 ```powershell
@@ -470,6 +481,8 @@ Destination filename [startup-config]?   <-- กด Enter
 Building configuration...
 [OK]
 R1#
+R1# show ip dhcp binding     <-- รันตอนตั้งค่าเสร็จทั้งหมด
+
 ```
 - **SW1**:
 ```powershell
@@ -521,6 +534,7 @@ Destination filename [startup-config]?   <-- กด Enter
 Building configuration...
 [OK]
 SW1#
+SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเสร็จทั้งหมด
 ```
 - **SW2**:
 ```powershell
@@ -568,6 +582,7 @@ Destination filename [startup-config]?   <-- กด Enter
 Building configuration...
 [OK]
 SW2#
+SW2# show ip dhcp snooping     <-- รันตอนตั้งค่าเสร็จทั้งหมด
 ```
 
 **การทดสอบการทำงาน**:
@@ -576,14 +591,6 @@ SW2#
 - ตั้งค่า PC3 เป็น DHCP Server ปลอมและตรวจสอบว่า PC2 ยังได้รับ IP จาก R1
 - จาก PC1 ping PC2 (ควรสำเร็จ)
 
-**ภาพการเชื่อมต่อ (Text)**:
-```
-[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
-                    [SW1 (Fa0/24)] -- [SW2 (Fa0/24)]
-[PC2 (VLAN 20)] -- [SW2 (Fa0/1)]
-[PC3 (VLAN 20)] -- [SW2 (Fa0/2)]
-                    [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
-```
 
 ---
 
