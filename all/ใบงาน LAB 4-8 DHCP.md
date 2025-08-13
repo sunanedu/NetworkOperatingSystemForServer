@@ -89,7 +89,7 @@ SW1#wr
 **การเชื่อมต่อสาย**:
 - PC1 --(Straight-through)--> SW1 (Fa0/1)
 - PC2 --(Straight-through)--> SW1 (Fa0/2)
-- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+- SW1 (Gi0/1) --(Cross-over)--> R1 (Gi0/0)
 - R1 (Gi0/1) --(Cross-over)--> R2 (Gi0/0)
 
 **การกำหนด IP Address, Subnet, Gateway**:
@@ -152,6 +152,7 @@ Destination filename [startup-config]?    <-- กด Enter
 Building configuration...
 [OK]
 R1#
+R1# show ip dhcp binding    <-- รันตอนตั้งค่าเสร็จทั้งหมด
 ```
 - **R2**:
 ```powershell
