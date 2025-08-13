@@ -272,7 +272,7 @@ SW1#
 **การกำหนด IP Address, Subnet, Gateway**:
 - PC1: DHCP (คาดว่าได้ 192.168.10.2/24, Gateway: 192.168.10.1)
 - PC2: DHCP (คาดว่าได้ 192.168.10.3/24, Gateway: 192.168.10.1)
-- PC3: DHCP Server ปลอม (192.168.10.100/24)
+- PC3: จะต้องเปลี่ยนเป็น server ในอนาคตเป็น DHCP Server ปลอม (192.168.10.100/24)
 - R1: Gi0/0 = 192.168.10.1/24
 
 **ภาพการเชื่อมต่อ (Text)**:
@@ -353,7 +353,7 @@ SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเส
 ```
 
 **การทดสอบการทำงาน**:
-- ใช้คำสั่ง `show ip dhcp snooping` บน SW1 เพื่อยืนยันว่า Fa0/24 เป็น Trusted Port
+- ใช้คำสั่ง `show ip dhcp snooping` บน SW1 เพื่อยืนยันว่า Gi0/1 เป็น Trusted Port
 - ใช้คำสั่ง `show ip dhcp binding` บน R1 เพื่อยืนยันว่า PC1 และ PC2 ได้รับ IP
 - ตั้งค่า PC3 เป็น DHCP Server ปลอมและตรวจสอบว่า PC1 และ PC2 ยังได้รับ IP จาก R1
 - จาก PC1 ping PC2 (ควรสำเร็จ)
