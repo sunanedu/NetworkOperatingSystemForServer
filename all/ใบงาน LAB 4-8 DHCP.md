@@ -74,6 +74,9 @@ SW1#wr
 
 ![ping pc1-pc2](4.1-2.png)
 
+
+
+
 ---
 
 ### ใบงาน 4.2: DHCP Relay Agent
@@ -97,7 +100,8 @@ SW1#wr
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```plaintext
+```bash
+Would you like to enter the initial configuration dialog? [yes/no]: no
 Router>enable
 Router#configure terminal
 Router(config)#hostname R1
