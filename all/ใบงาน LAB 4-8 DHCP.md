@@ -98,6 +98,16 @@ SW1#wr
 - R1: Gi0/0.10 = 192.168.10.1/24, Gi0/0.20 = 192.168.20.1/24, Gi0/1 = 172.16.1.1/30
 - R2: Gi0/0 = 192.168.30.1/24
 
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
+[PC2 (VLAN 20)] -- [SW1 (Fa0/2)]
+                    [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
+                                        [R1 (Gi0/1)] -- [R2 (Gi0/0)]
+```
+
+![ภาพ 4.2](4.2.png)
+
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
 ```powershell
@@ -107,7 +117,7 @@ Router# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Router(config)# hostname R1
 
-(  Configure sub-interfaces for VLANs )
+ความหมายคำสั่ง Configure sub-interfaces for VLANs )
 R1(config)# interface gigabitethernet0/0.10
 R1(config-subif)# encapsulation dot1Q 10
 R1(config-subif)# ip address 192.168.10.1 255.255.255.0
@@ -122,22 +132,23 @@ R1(config-subif)# ip helper-address 192.168.30.1
 R1(config-subif)# no shutdown
 R1(config-subif)# exit
 
-(  Turn on the physical interface)
+ความหมายคำสั่ง Turn on the physical interface)
 R1(config)# interface gigabitethernet0/0
 R1(config-if)# no shutdown
 R1(config-if)# exit
 
-(  Configure the link to R2)
+ความหมายคำสั่ง Configure the link to R2)
 R1(config)# interface gigabitethernet0/1
 R1(config-if)# ip address 172.16.1.1 255.255.255.252
 R1(config-if)# no shutdown
 R1(config-if)# exit
 
-(  Static route to reach the DHCP server network)
+ความหมายคำสั่ง Static route to reach the DHCP server network)
 R1(config)# ip route 192.168.30.0 255.255.255.0 172.16.1.2
 R1(config)# exit
 
-R1#wr
+R1# copy running-config startup-config
+Destination filename [startup-config]? 
 Building configuration...
 [OK]
 R1#
@@ -164,7 +175,7 @@ R2(config-if)# exit
 
 ความหมายคำสั่ง Shutdown unused interface
 R2(config)# interface gigabitethernet0/1
-R2(config-if)# shutdown
+R2(config-if)# no shutdown
 R2(config-if)# exit
 
 ความหมายคำสั่ง Configure DHCP pools
@@ -237,13 +248,8 @@ SW1#
 - จาก PC1 และ PC2 รัน `ipconfig` เพื่อยืนยัน IP และ Gateway
 - จาก PC1 ping PC2 (ควรสำเร็จ)
 
-**ภาพการเชื่อมต่อ (Text)**:
-```
-[PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
-[PC2 (VLAN 20)] -- [SW1 (Fa0/2)]
-                    [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
-                                        [R1 (Gi0/1)] -- [R2 (Gi0/0)]
-```
+![ping pc1 to pc2](4.2-2.png)
+
 
 ---
 
