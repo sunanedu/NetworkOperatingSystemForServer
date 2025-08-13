@@ -102,84 +102,134 @@ SW1#wr
 - **R1**:
 ```powershell
 Would you like to enter the initial configuration dialog? [yes/no]: no
-Router>enable
-Router#configure terminal
-Router(config)#hostname R1
-R1(config)#interface gi0/0.10
-R1(config-subif)#encapsulation dot1Q 10
-R1(config-subif)#ip address 192.168.10.1 255.255.255.0
-R1(config-subif)#ip helper-address 192.168.30.1
-R1(config-subif)#no shutdown
-R1(config-subif)#exit
-R1(config)#interface gi0/0.20
-R1(config-subif)#encapsulation dot1Q 20
-R1(config-subif)#ip address 192.168.20.1 255.255.255.0
-R1(config-subif)#ip helper-address 192.168.30.1
-R1(config-subif)#no shutdown
-R1(config-subif)#exit
-R1(config)#interface gi0/0
-R1(config-if)#no shutdown
-R1(config-if)#exit
-R1(config)#interface gi0/1
-R1(config-if)#ip address 172.16.1.1 255.255.255.252
-R1(config-if)#no shutdown
-R1(config-if)#exit
-R1(config)#ip route 192.168.30.0 255.255.255.0 172.16.1.2
-R1(config)#exit
+Router> enable
+Router# configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)# hostname R1
+
+(  Configure sub-interfaces for VLANs )
+R1(config)# interface gigabitethernet0/0.10
+R1(config-subif)# encapsulation dot1Q 10
+R1(config-subif)# ip address 192.168.10.1 255.255.255.0
+R1(config-subif)# ip helper-address 192.168.30.1
+R1(config-subif)# no shutdown
+R1(config-subif)# exit
+
+R1(config)# interface gigabitethernet0/0.20
+R1(config-subif)# encapsulation dot1Q 20
+R1(config-subif)# ip address 192.168.20.1 255.255.255.0
+R1(config-subif)# ip helper-address 192.168.30.1
+R1(config-subif)# no shutdown
+R1(config-subif)# exit
+
+(  Turn on the physical interface)
+R1(config)# interface gigabitethernet0/0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+
+(  Configure the link to R2)
+R1(config)# interface gigabitethernet0/1
+R1(config-if)# ip address 172.16.1.1 255.255.255.252
+R1(config-if)# no shutdown
+R1(config-if)# exit
+
+(  Static route to reach the DHCP server network)
+R1(config)# ip route 192.168.30.0 255.255.255.0 172.16.1.2
+R1(config)# exit
+
 R1#wr
+Building configuration...
+[OK]
+R1#
 ```
 - **R2**:
 ```powershell
-Router>enable
-Router#configure terminal
-Router(config)#hostname R2
-R2(config)#interface gi0/0
-R2(config-if)#ip address 192.168.30.1 255.255.255.0
-R2(config-if)#no shutdown
-R2(config-if)#exit
-R2(config)#ip dhcp pool VLAN10
-R2(dhcp-config)#network 192.168.10.0 255.255.255.0
-R2(dhcp-config)#default-router 192.168.10.1
-R2(dhcp-config)#exit
-R2(config)#ip dhcp pool VLAN20
-R2(dhcp-config)#network 192.168.20.0 255.255.255.0
-R2(dhcp-config)#default-router 192.168.20.1
-R2(dhcp-config)#exit
-R2(config)#interface gi0/1
-R2(config-if)#ip address 172.16.1.2 255.255.255.252
-R2(config-if)#no shutdown
-R2(config-if)#exit
-R2(config)#ip route 192.168.10.0 255.255.255.0 172.16.1.1
-R2(config)#ip route 192.168.20.0 255.255.255.0 172.16.1.1
-R2(config)#exit
-R2#wr
+Would you like to enter the initial configuration dialog? [yes/no]: no
+Router> enable
+Router# configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)# hostname R2
+
+ความหมายคำสั่ง (Best Practice) Create a Loopback interface for the server IP
+R2(config)# interface loopback0
+R2(config-if)# ip address 192.168.30.1 255.255.255.0
+R2(config-if)# no shutdown
+R2(config-if)# exit
+
+ความหมายคำสั่ง Configure the physical link to R1
+R2(config)# interface gigabitethernet0/0
+R2(config-if)# ip address 172.16.1.2 255.255.255.252
+R2(config-if)# no shutdown
+R2(config-if)# exit
+
+ความหมายคำสั่ง Shutdown unused interface
+R2(config)# interface gigabitethernet0/1
+R2(config-if)# shutdown
+R2(config-if)# exit
+
+ความหมายคำสั่ง Configure DHCP pools
+R2(config)# ip dhcp pool VLAN10
+R2(dhcp-config)# network 192.168.10.0 255.255.255.0
+R2(dhcp-config)# default-router 192.168.10.1
+R2(dhcp-config)# exit
+
+R2(config)# ip dhcp pool VLAN20
+R2(dhcp-config)# network 192.168.20.0 255.255.255.0
+R2(dhcp-config)# default-router 192.168.20.1
+R2(dhcp-config)# exit
+
+ความหมายคำสั่ง Static routes to reach the VLAN networks
+R2(config)# ip route 192.168.10.0 255.255.255.0 172.16.1.1
+R2(config)# ip route 192.168.20.0 255.255.255.0 172.16.1.1
+R2(config)# exit
+
+R2# copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R2#
 ```
 - **SW1**:
 ```powershell
-Switch>enable
-Switch#configure terminal
-Switch(config)#hostname SW1
-SW1(config)#vlan 10
-SW1(config-vlan)#name SALES
-SW1(config-vlan)#exit
-SW1(config)#vlan 20
-SW1(config-vlan)#name ENGINEERING
-SW1(config-vlan)#exit
-SW1(config)#interface fa0/1
-SW1(config-if)#switchport mode access
-SW1(config-if)#switchport access vlan 10
-SW1(config-if)#exit
-SW1(config)#interface fa0/2
-SW1(config-if)#switchport mode access
-SW1(config-if)#switchport access vlan 20
-SW1(config-if)#exit
-SW1(config)#interface gi0/1
-SW1(config-if)#switchport mode trunk
-SW1(config-if)#switchport trunk allowed vlan 10,20
-SW1(config-if)#switchport trunk native vlan 10
-SW1(config-if)#exit
-SW1(config)#exit
-SW1#wr
+Switch> enable
+Switch# configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)# hostname SW1
+
+ความหมายคำสั่ง  Create VLANs
+SW1(config)# vlan 10
+SW1(config-vlan)# name SALES
+SW1(config-vlan)# exit
+
+SW1(config)# vlan 20
+SW1(config-vlan)# name ENGINEERING
+SW1(config-vlan)# exit
+
+ความหมายคำสั่ง  Configure access port for PC1
+SW1(config)# interface fastethernet0/1
+SW1(config-if)# switchport mode access
+SW1(config-if)# switchport access vlan 10
+SW1(config-if)# exit
+
+ความหมายคำสั่ง Configure access port for PC2
+SW1(config)# interface fastethernet0/2
+SW1(config-if)# switchport mode access
+SW1(config-if)# switchport access vlan 20
+SW1(config-if)# exit
+
+ความหมายคำสั่ง  Configure trunk port to R1
+SW1(config)# interface gigabitethernet0/1
+SW1(config-if)# switchport mode trunk
+SW1(config-if)# switchport trunk allowed vlan 10,20
+SW1(config-if)# exit
+
+SW1(config)# exit
+
+SW1# copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+SW1#
 ```
 
 **การทดสอบการทำงาน**:
@@ -191,7 +241,7 @@ SW1#wr
 ```
 [PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
 [PC2 (VLAN 20)] -- [SW1 (Fa0/2)]
-                    [SW1 (Fa0/24)] -- [R1 (Gi0/0)]
+                    [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
                                         [R1 (Gi0/1)] -- [R2 (Gi0/0)]
 ```
 
