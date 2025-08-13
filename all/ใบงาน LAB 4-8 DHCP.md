@@ -277,44 +277,75 @@ SW1#
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
 ```powershell
-Router>enable
-Router#configure terminal
-Router(config)#hostname R1
-R1(config)#interface gi0/0
-R1(config-if)#ip address 192.168.10.1 255.255.255.0
-R1(config-if)#no shutdown
-R1(config-if)#exit
-R1(config)#ip dhcp pool LAN
-R1(dhcp-config)#network 192.168.10.0 255.255.255.0
-R1(dhcp-config)#default-router 192.168.10.1
-R1(dhcp-config)#exit
-R1(config)#write memory
+Would you like to enter the initial configuration dialog? [yes/no]: no
+Router> enable
+Router# configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)# hostname R1
+
+!! Configure the gateway interface
+R1(config)# interface gigabitethernet0/0
+R1(config-if)# ip address 192.168.10.1 255.255.255.0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+
+!! Configure the DHCP pool for clients
+R1(config)# ip dhcp pool LAN
+R1(dhcp-config)# network 192.168.10.0 255.255.255.0
+R1(dhcp-config)# default-router 192.168.10.1
+R1(dhcp-config)# exit
+
+R1(config)# exit
+
+R1# copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R1#
 ```
 - **SW1**:
 ```powershell
-Switch>enable
-Switch#configure terminal
-Switch(config)#hostname SW1
-SW1(config)#ip dhcp snooping
-SW1(config)#ip dhcp snooping vlan 1
-SW1(config)#interface fa0/1
-SW1(config-if)#switchport mode access
-SW1(config-if)#switchport access vlan 1
-SW1(config-if)#exit
-SW1(config)#interface fa0/2
-SW1(config-if)#switchport mode access
-SW1(config-if)#switchport access vlan 1
-SW1(config-if)#exit
-SW1(config)#interface fa0/3
-SW1(config-if)#switchport mode access
-SW1(config-if)#switchport access vlan 1
-SW1(config-if)#exit
-SW1(config)#interface gi0/1
-SW1(config-if)#switchport mode access
-SW1(config-if)#switchport access vlan 1
-SW1(config-if)#ip dhcp snooping trust
-SW1(config-if)#exit
-SW1(config)#write memory
+Switch> enable
+Switch# configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)# hostname SW1
+
+!! Enable DHCP Snooping globally and for VLAN 1
+SW1(config)# ip dhcp snooping
+SW1(config)# ip dhcp snooping vlan 1
+
+!! Configure ports for client PCs (these are Untrusted by default)
+SW1(config)# interface fastethernet0/1
+SW1(config-if)# switchport mode access
+SW1(config-if)# switchport access vlan 1
+SW1(config-if)# exit
+
+SW1(config)# interface fastethernet0/2
+SW1(config-if)# switchport mode access
+SW1(config-if)# switchport access vlan 1
+SW1(config-if)# exit
+
+SW1(config)# interface fastethernet0/3
+SW1(config-if)# switchport mode access
+SW1(config-if)# switchport access vlan 1
+SW1(config-if)# exit
+
+!! Configure the port connected to the legitimate DHCP Server (R1)
+SW1(config)# interface gigabitethernet0/1
+SW1(config-if)# switchport mode access
+SW1(config-if)# switchport access vlan 1
+
+!! Set this port as trusted to allow DHCP server messages
+SW1(config-if)# ip dhcp snooping trust
+SW1(config-if)# exit
+
+SW1(config)# exit
+
+SW1# copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+SW1#
 ```
 
 **การทดสอบการทำงาน**:
