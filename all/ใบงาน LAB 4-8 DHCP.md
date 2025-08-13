@@ -484,7 +484,57 @@ R1#
 R1# show ip dhcp binding     <-- รันตอนตั้งค่าเสร็จทั้งหมด
 
 ```
+
 - **SW1**:
+```powershell
+Switch> enable
+Switch# configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)# hostname SW2
+
+ความหมายคำสั่ง Create VLANs
+SW2(config)# vlan 10
+SW2(config-vlan)# name SALES
+SW2(config-vlan)# exit
+SW2(config)# vlan 20
+SW2(config-vlan)# name ENGINEERING
+SW2(config-vlan)# exit
+
+ความหมายคำสั่ง Enable DHCP Snooping globally and for specific VLANs
+SW2(config)# ip dhcp snooping
+SW2(config)# ip dhcp snooping vlan 10,20
+
+ความหมายคำสั่ง Configure access port for PC2 (Untrusted by default)
+SW2(config)# interface fastethernet0/1
+SW2(config-if)# switchport mode access
+SW2(config-if)# switchport access vlan 20
+SW2(config-if)# exit
+
+ความหมายคำสั่ง Configure access port for Rogue DHCP Server (Untrusted by default)
+SW2(config)# interface fastethernet0/2
+SW2(config-if)# switchport mode access
+SW2(config-if)# switchport access vlan 20
+SW2(config-if)# exit
+
+ความหมายคำสั่ง Configure trunk port to SW1
+SW2(config)# interface fastethernet0/24
+SW2(config-if)# switchport mode trunk
+SW2(config-if)# switchport trunk allowed vlan 10,20
+ความหมายคำสั่ง This trunk must be trusted to allow DHCP replies from SW1 to reach clients
+SW2(config-if)# ip dhcp snooping trust
+SW2(config-if)# exit
+
+SW2(config)# exit
+
+SW2# copy running-config startup-config
+Destination filename [startup-config]?   <-- กด Enter 
+Building configuration...
+[OK]
+SW2#
+SW2# show ip dhcp snooping     <-- รันตอนตั้งค่าเสร็จทั้งหมด
+```
+
+- **SW2**:
 ```powershell
 Switch> enable
 Switch# configure terminal
@@ -536,54 +586,7 @@ Building configuration...
 SW1#
 SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเสร็จทั้งหมด
 ```
-- **SW2**:
-```powershell
-Switch> enable
-Switch# configure terminal
-Enter configuration commands, one per line.  End with CNTL/Z.
-Switch(config)# hostname SW2
 
-ความหมายคำสั่ง Create VLANs
-SW2(config)# vlan 10
-SW2(config-vlan)# name SALES
-SW2(config-vlan)# exit
-SW2(config)# vlan 20
-SW2(config-vlan)# name ENGINEERING
-SW2(config-vlan)# exit
-
-ความหมายคำสั่ง Enable DHCP Snooping globally and for specific VLANs
-SW2(config)# ip dhcp snooping
-SW2(config)# ip dhcp snooping vlan 10,20
-
-ความหมายคำสั่ง Configure access port for PC2 (Untrusted by default)
-SW2(config)# interface fastethernet0/1
-SW2(config-if)# switchport mode access
-SW2(config-if)# switchport access vlan 20
-SW2(config-if)# exit
-
-ความหมายคำสั่ง Configure access port for Rogue DHCP Server (Untrusted by default)
-SW2(config)# interface fastethernet0/2
-SW2(config-if)# switchport mode access
-SW2(config-if)# switchport access vlan 20
-SW2(config-if)# exit
-
-ความหมายคำสั่ง Configure trunk port to SW1
-SW2(config)# interface fastethernet0/24
-SW2(config-if)# switchport mode trunk
-SW2(config-if)# switchport trunk allowed vlan 10,20
-ความหมายคำสั่ง This trunk must be trusted to allow DHCP replies from SW1 to reach clients
-SW2(config-if)# ip dhcp snooping trust
-SW2(config-if)# exit
-
-SW2(config)# exit
-
-SW2# copy running-config startup-config
-Destination filename [startup-config]?   <-- กด Enter 
-Building configuration...
-[OK]
-SW2#
-SW2# show ip dhcp snooping     <-- รันตอนตั้งค่าเสร็จทั้งหมด
-```
 
 **การทดสอบการทำงาน**:
 - ใช้คำสั่ง `show ip dhcp snooping` บน SW1 และ SW2 เพื่อยืนยันว่า Gi0/1 บน SW1 เป็น Trusted Port
