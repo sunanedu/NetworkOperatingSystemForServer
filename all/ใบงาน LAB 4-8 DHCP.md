@@ -539,7 +539,7 @@ SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเส
 ```
 
 - **SW2**:
-```powershell
+```clisp
 Switch> enable
 Switch# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
