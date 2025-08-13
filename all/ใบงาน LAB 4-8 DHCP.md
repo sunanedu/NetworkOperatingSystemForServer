@@ -31,7 +31,7 @@
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```powershell
+```ruby
 Router>enable
 Router#configure terminal
 Router(config)#hostname R1
@@ -47,7 +47,7 @@ R1(config)#exit
 R1#wr
 ```
 - **SW1**:
-```powershell
+```ruby
 Switch>enable
 Switch#configure terminal
 Switch(config)#hostname SW1
@@ -110,14 +110,14 @@ SW1#wr
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```powershell
+```ruby
 Would you like to enter the initial configuration dialog? [yes/no]: no
 Router> enable
 Router# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Router(config)# hostname R1
 
-ความหมายคำสั่ง Configure sub-interfaces for VLANs )
+____ความหมายคำสั่ง Configure sub-interfaces for VLANs )
 R1(config)# interface gigabitethernet0/0.10
 R1(config-subif)# encapsulation dot1Q 10
 R1(config-subif)# ip address 192.168.10.1 255.255.255.0
@@ -132,18 +132,18 @@ R1(config-subif)# ip helper-address 192.168.30.1
 R1(config-subif)# no shutdown
 R1(config-subif)# exit
 
-ความหมายคำสั่ง Turn on the physical interface)
+____ความหมายคำสั่ง Turn on the physical interface)
 R1(config)# interface gigabitethernet0/0
 R1(config-if)# no shutdown
 R1(config-if)# exit
 
-ความหมายคำสั่ง Configure the link to R2)
+____ความหมายคำสั่ง Configure the link to R2)
 R1(config)# interface gigabitethernet0/1
 R1(config-if)# ip address 172.16.1.1 255.255.255.252
 R1(config-if)# no shutdown
 R1(config-if)# exit
 
-ความหมายคำสั่ง Static route to reach the DHCP server network)
+____ความหมายคำสั่ง Static route to reach the DHCP server network)
 R1(config)# ip route 192.168.30.0 255.255.255.0 172.16.1.2
 R1(config)# exit
 
@@ -155,31 +155,31 @@ R1#
 R1# show ip dhcp binding    <-- รันตอนตั้งค่าเสร็จทั้งหมด
 ```
 - **R2**:
-```powershell
+```ruby
 Would you like to enter the initial configuration dialog? [yes/no]: no
 Router> enable
 Router# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Router(config)# hostname R2
 
-ความหมายคำสั่ง (Best Practice) Create a Loopback interface for the server IP
+____ความหมายคำสั่ง (Best Practice) Create a Loopback interface for the server IP
 R2(config)# interface loopback0
 R2(config-if)# ip address 192.168.30.1 255.255.255.0
 R2(config-if)# no shutdown
 R2(config-if)# exit
 
-ความหมายคำสั่ง Configure the physical link to R1
+____ความหมายคำสั่ง Configure the physical link to R1
 R2(config)# interface gigabitethernet0/0
 R2(config-if)# ip address 172.16.1.2 255.255.255.252
 R2(config-if)# no shutdown
 R2(config-if)# exit
 
-ความหมายคำสั่ง Shutdown unused interface
+____ความหมายคำสั่ง Shutdown unused interface
 R2(config)# interface gigabitethernet0/1
 R2(config-if)# no shutdown
 R2(config-if)# exit
 
-ความหมายคำสั่ง Configure DHCP pools
+____ความหมายคำสั่ง Configure DHCP pools
 R2(config)# ip dhcp pool VLAN10
 R2(dhcp-config)# network 192.168.10.0 255.255.255.0
 R2(dhcp-config)# default-router 192.168.10.1
@@ -190,7 +190,7 @@ R2(dhcp-config)# network 192.168.20.0 255.255.255.0
 R2(dhcp-config)# default-router 192.168.20.1
 R2(dhcp-config)# exit
 
-ความหมายคำสั่ง Static routes to reach the VLAN networks
+____ความหมายคำสั่ง Static routes to reach the VLAN networks
 R2(config)# ip route 192.168.10.0 255.255.255.0 172.16.1.1
 R2(config)# ip route 192.168.20.0 255.255.255.0 172.16.1.1
 R2(config)# exit
@@ -202,13 +202,13 @@ Building configuration...
 R2#
 ```
 - **SW1**:
-```powershell
+```ruby
 Switch> enable
 Switch# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Switch(config)# hostname SW1
 
-ความหมายคำสั่ง  Create VLANs
+____ความหมายคำสั่ง  Create VLANs
 SW1(config)# vlan 10
 SW1(config-vlan)# name SALES
 SW1(config-vlan)# exit
@@ -217,19 +217,19 @@ SW1(config)# vlan 20
 SW1(config-vlan)# name ENGINEERING
 SW1(config-vlan)# exit
 
-ความหมายคำสั่ง  Configure access port for PC1
+____ความหมายคำสั่ง  Configure access port for PC1
 SW1(config)# interface fastethernet0/1
 SW1(config-if)# switchport mode access
 SW1(config-if)# switchport access vlan 10
 SW1(config-if)# exit
 
-ความหมายคำสั่ง Configure access port for PC2
+____ความหมายคำสั่ง Configure access port for PC2
 SW1(config)# interface fastethernet0/2
 SW1(config-if)# switchport mode access
 SW1(config-if)# switchport access vlan 20
 SW1(config-if)# exit
 
-ความหมายคำสั่ง  Configure trunk port to R1
+____ความหมายคำสั่ง  Configure trunk port to R1
 SW1(config)# interface gigabitethernet0/1
 SW1(config-if)# switchport mode trunk
 SW1(config-if)# switchport trunk allowed vlan 10,20
@@ -286,20 +286,20 @@ SW1#
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```powershell
+```ruby
 Would you like to enter the initial configuration dialog? [yes/no]: no
 Router> enable
 Router# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Router(config)# hostname R1
 
-ความหมายคำสั่ง Configure the gateway interface
+____ความหมายคำสั่ง Configure the gateway interface
 R1(config)# interface gigabitethernet0/0
 R1(config-if)# ip address 192.168.10.1 255.255.255.0
 R1(config-if)# no shutdown
 R1(config-if)# exit
 
-ความหมายคำสั่ง Configure the DHCP pool for clients
+____ความหมายคำสั่ง Configure the DHCP pool for clients
 R1(config)# ip dhcp pool LAN
 R1(dhcp-config)# network 192.168.10.0 255.255.255.0
 R1(dhcp-config)# default-router 192.168.10.1
@@ -315,32 +315,32 @@ R1#
 R1# show ip dhcp binding     <-- รันตอนตั้งค่าเสร็จทั้งหมด
 ```
 - **SW1**:
-```powershell
+```ruby
 Switch> enable
 Switch# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Switch(config)# hostname SW1
 
-ความหมายคำสั่ง Enable DHCP Snooping globally and for VLAN 1
+____ความหมายคำสั่ง Enable DHCP Snooping globally and for VLAN 1
 SW1(config)# ip dhcp snooping
 SW1(config)# ip dhcp snooping vlan 1
 
-ความหมายคำสั่ง Configure ports for client PCs (these are Untrusted by default)
+____ความหมายคำสั่ง Configure ports for client PCs (these are Untrusted by default)
 SW1(config)# interface range fastethernet0/1 - 3
 SW1(config-if-range)# switchport mode access
 SW1(config-if-range)# switchport access vlan 1
 SW1(config-if-range)# exit
 
-ความหมายคำสั่ง Configure the port connected to the legitimate DHCP Server (R1)
+____ความหมายคำสั่ง Configure the port connected to the legitimate DHCP Server (R1)
 SW1(config)# interface gigabitethernet0/1
 SW1(config-if)# switchport mode access
 SW1(config-if)# switchport access vlan 1
 
-ความหมายคำสั่ง Set this port as trusted to allow DHCP server messages
+____ความหมายคำสั่ง Set this port as trusted to allow DHCP server messages
 SW1(config-if)# ip dhcp snooping trust
 SW1(config-if)# exit
 
-(ปิดฟีเจอร์ Option 82 คือการสั่งให้ SW1 หยุดการเพิ่มข้อมูล Option 82 เข้าไปในแพ็กเกจ DHCP)
+____ปิดฟีเจอร์ Option 82 คือการสั่งให้ SW1 หยุดการเพิ่มข้อมูล Option 82 เข้าไปในแพ็กเกจ DHCP
 SW1(config)# no ip dhcp snooping information option
 SW1(config)# exit
 
@@ -438,14 +438,14 @@ SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเส
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```powershell
+```ruby
 Would you like to enter the initial configuration dialog? [yes/no]: no
 Router> enable
 Router# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Router(config)# hostname R1
 
-ความหมายคำสั่ง Configure sub-interfaces for VLANs
+____ความหมายคำสั่ง Configure sub-interfaces for VLANs
 R1(config)# interface gigabitethernet0/0.10
 R1(config-subif)# encapsulation dot1Q 10
 R1(config-subif)# ip address 192.168.10.1 255.255.255.0
@@ -458,12 +458,12 @@ R1(config-subif)# ip address 192.168.20.1 255.255.255.0
 R1(config-subif)# no shutdown
 R1(config-subif)# exit
 
-ความหมายคำสั่ง Turn on the physical interface
+____ความหมายคำสั่ง Turn on the physical interface
 R1(config)# interface gigabitethernet0/0
 R1(config-if)# no shutdown
 R1(config-if)# exit
 
-ความหมายคำสั่ง Configure DHCP pools
+____ความหมายคำสั่ง Configure DHCP pools
 R1(config)# ip dhcp pool VLAN10
 R1(dhcp-config)# network 192.168.10.0 255.255.255.0
 R1(dhcp-config)# default-router 192.168.10.1
@@ -486,13 +486,13 @@ R1# show ip dhcp binding     <-- รันตอนตั้งค่าเส�
 ```
 
 - **SW1**:
-```powershell
+```ruby
 Switch> enable
 Switch# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Switch(config)# hostname SW1
 
-ความหมายคำสั่ง Create VLANs
+____ความหมายคำสั่ง Create VLANs
 SW1(config)# vlan 10
 SW1(config-vlan)# name SALES
 SW1(config-vlan)# exit
@@ -500,31 +500,31 @@ SW1(config)# vlan 20
 SW1(config-vlan)# name ENGINEERING
 SW1(config-vlan)# exit
 
-ความหมายคำสั่ง Enable DHCP Snooping globally and for specific VLANs
+____ความหมายคำสั่ง Enable DHCP Snooping globally and for specific VLANs
 SW1(config)# ip dhcp snooping
 SW1(config)# ip dhcp snooping vlan 10,20
 
-ความหมายคำสั่ง Configure access port for PC1 (Untrusted by default)
+____ความหมายคำสั่ง Configure access port for PC1 (Untrusted by default)
 SW1(config)# interface fastethernet0/1
 SW1(config-if)# switchport mode access
 SW1(config-if)# switchport access vlan 10
 SW1(config-if)# exit
 
-ความหมายคำสั่ง Configure trunk port to R1 (DHCP Server)
+____ความหมายคำสั่ง Configure trunk port to R1 (DHCP Server)
 SW1(config)# interface gigabitethernet0/1
 SW1(config-if)# switchport mode trunk
 SW1(config-if)# switchport trunk allowed vlan 10,20
 
-ความหมายคำสั่ง Set this port as trusted because it leads to the legitimate DHCP server
+____ความหมายคำสั่ง Set this port as trusted because it leads to the legitimate DHCP server
 SW1(config-if)# ip dhcp snooping trust
 SW1(config-if)# exit
 
-ความหมายคำสั่ง Configure trunk port to SW2
+____ความหมายคำสั่ง Configure trunk port to SW2
 SW1(config)# interface fastethernet0/24
 SW1(config-if)# switchport mode trunk
 SW1(config-if)# switchport trunk allowed vlan 10,20
 
-ความหมายคำสั่ง This trunk must also be trusted to pass DHCP replies to SW2
+____ความหมายคำสั่ง This trunk must also be trusted to pass DHCP replies to SW2
 SW1(config-if)# ip dhcp snooping trust
 SW1(config-if)# exit
 
@@ -545,7 +545,7 @@ Switch# configure terminal
 Enter configuration commands, one per line.  End with CNTL/Z.
 Switch(config)# hostname SW2
 
-ความหมายคำสั่ง Create VLANs
+____ความหมายคำสั่ง Create VLANs
 SW2(config)# vlan 10
 SW2(config-vlan)# name SALES
 SW2(config-vlan)# exit
@@ -553,23 +553,23 @@ SW2(config)# vlan 20
 SW2(config-vlan)# name ENGINEERING
 SW2(config-vlan)# exit
 
-ความหมายคำสั่ง Enable DHCP Snooping globally and for specific VLANs
+____ความหมายคำสั่ง Enable DHCP Snooping globally and for specific VLANs
 SW2(config)# ip dhcp snooping
 SW2(config)# ip dhcp snooping vlan 10,20
 
-ความหมายคำสั่ง Configure access port for PC2 (Untrusted by default)
+____ความหมายคำสั่ง Configure access port for PC2 (Untrusted by default)
 SW2(config)# interface fastethernet0/1
 SW2(config-if)# switchport mode access
 SW2(config-if)# switchport access vlan 20
 SW2(config-if)# exit
 
-ความหมายคำสั่ง Configure access port for Rogue DHCP Server (Untrusted by default)
+____ความหมายคำสั่ง Configure access port for Rogue DHCP Server (Untrusted by default)
 SW2(config)# interface fastethernet0/2
 SW2(config-if)# switchport mode access
 SW2(config-if)# switchport access vlan 20
 SW2(config-if)# exit
 
-ความหมายคำสั่ง Configure trunk port to SW1
+____ความหมายคำสั่ง Configure trunk port to SW1
 SW2(config)# interface fastethernet0/24
 SW2(config-if)# switchport mode trunk
 SW2(config-if)# switchport trunk allowed vlan 10,20
