@@ -275,6 +275,15 @@ SW1#
 - PC3: DHCP Server ปลอม (192.168.10.100/24)
 - R1: Gi0/0 = 192.168.10.1/24
 
+**ภาพการเชื่อมต่อ (Text)**:
+```
+[PC1] -- [SW1 (Fa0/1)]
+[PC2] -- [SW1 (Fa0/2)]
+[PC3] -- [SW1 (Fa0/3)]
+          [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
+```
+![5.1](5.1.png)
+
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
 ```powershell
@@ -331,6 +340,8 @@ SW1(config-if)# switchport access vlan 1
 SW1(config-if)# ip dhcp snooping trust
 SW1(config-if)# exit
 
+(ปิดฟีเจอร์ Option 82 คือการสั่งให้ SW1 หยุดการเพิ่มข้อมูล Option 82 เข้าไปในแพ็กเกจ DHCP)
+SW1(config)# no ip dhcp snooping information option
 SW1(config)# exit
 
 SW1# copy running-config startup-config
@@ -347,13 +358,8 @@ SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเส
 - ตั้งค่า PC3 เป็น DHCP Server ปลอมและตรวจสอบว่า PC1 และ PC2 ยังได้รับ IP จาก R1
 - จาก PC1 ping PC2 (ควรสำเร็จ)
 
-**ภาพการเชื่อมต่อ (Text)**:
-```
-[PC1] -- [SW1 (Fa0/1)]
-[PC2] -- [SW1 (Fa0/2)]
-[PC3] -- [SW1 (Fa0/3)]
-          [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
-```
+![ping pc1 to pc2/3](5.1-2.png)
+
 
 ---
 
