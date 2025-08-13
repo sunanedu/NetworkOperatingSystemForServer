@@ -266,7 +266,7 @@ SW1#
 - PC1 --(Straight-through)--> SW1 (Fa0/1)
 - PC2 --(Straight-through)--> SW1 (Fa0/2)
 - PC3 --(Straight-through)--> SW1 (Fa0/3)
-- SW1 (Fa0/24) --(Cross-over)--> R1 (Gi0/0)
+- SW1 (Gi0/1) --(Cross-over)--> R1 (Gi0/0)
 
 **การกำหนด IP Address, Subnet, Gateway**:
 - PC1: DHCP (คาดว่าได้ 192.168.10.2/24, Gateway: 192.168.10.1)
@@ -309,7 +309,7 @@ SW1(config)#interface fa0/3
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 1
 SW1(config-if)#exit
-SW1(config)#interface fa0/24
+SW1(config)#interface gi0/1
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 1
 SW1(config-if)#ip dhcp snooping trust
@@ -328,7 +328,7 @@ SW1(config)#write memory
 [PC1] -- [SW1 (Fa0/1)]
 [PC2] -- [SW1 (Fa0/2)]
 [PC3] -- [SW1 (Fa0/3)]
-          [SW1 (Fa0/24)] -- [R1 (Gi0/0)]
+          [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
 ```
 
 ---
