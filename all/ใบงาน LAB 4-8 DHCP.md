@@ -31,7 +31,7 @@
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```plaintext
+```powershell
 Router>enable
 Router#configure terminal
 Router(config)#hostname R1
@@ -47,7 +47,7 @@ R1(config)#exit
 R1#wr
 ```
 - **SW1**:
-```plaintext
+```powershell
 Switch>enable
 Switch#configure terminal
 Switch(config)#hostname SW1
@@ -129,7 +129,7 @@ R1(config)#exit
 R1#wr
 ```
 - **R2**:
-```plaintext
+```powershell
 Router>enable
 Router#configure terminal
 Router(config)#hostname R2
@@ -155,7 +155,7 @@ R2(config)#exit
 R2#wr
 ```
 - **SW1**:
-```plaintext
+```powershell
 Switch>enable
 Switch#configure terminal
 Switch(config)#hostname SW1
@@ -173,7 +173,7 @@ SW1(config)#interface fa0/2
 SW1(config-if)#switchport mode access
 SW1(config-if)#switchport access vlan 20
 SW1(config-if)#exit
-SW1(config)#interface fa0/24
+SW1(config)#interface gi0/1
 SW1(config-if)#switchport mode trunk
 SW1(config-if)#switchport trunk allowed vlan 10,20
 SW1(config-if)#switchport trunk native vlan 10
@@ -220,7 +220,7 @@ SW1#wr
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```plaintext
+```powershell
 Router>enable
 Router#configure terminal
 Router(config)#hostname R1
@@ -235,7 +235,7 @@ R1(dhcp-config)#exit
 R1(config)#write memory
 ```
 - **SW1**:
-```plaintext
+```powershell
 Switch>enable
 Switch#configure terminal
 Switch(config)#hostname SW1
@@ -299,7 +299,7 @@ SW1(config)#write memory
 
 **การกำหนดชื่อและการตั้งค่า**:
 - **R1**:
-```plaintext
+```powershell
 Router>enable
 Router#configure terminal
 Router(config)#hostname R1
@@ -327,7 +327,7 @@ R1(dhcp-config)#exit
 R1(config)#write memory
 ```
 - **SW1**:
-```plaintext
+```powershell
 Switch>enable
 Switch#configure terminal
 Switch(config)#hostname SW1
@@ -357,7 +357,7 @@ SW1(config-if)#exit
 SW1(config)#write memory
 ```
 - **SW2**:
-```plaintext
+```powershell
 Switch>enable
 Switch#configure terminal
 Switch(config)#hostname SW2
