@@ -430,7 +430,7 @@ SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเส
 [PC1 (VLAN 10)] -- [SW1 (Fa0/1)]
                     [SW1 (Fa0/24)] -- [SW2 (Fa0/24)]
 [PC2 (VLAN 20)] -- [SW2 (Fa0/1)]
-[PC3 (VLAN 20)] -- [SW2 (Fa0/2)]
+[Server-PT (VLAN 20)] -- [SW2 (Fa0/2)]
                     [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
 ```
 
