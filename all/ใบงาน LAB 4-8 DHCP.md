@@ -409,19 +409,20 @@ SW1# show ip dhcp snooping     <-- รันตอนตั้งค่าเส
 **อุปกรณ์ที่ใช้**:
 - Router: Cisco 2911 (1 ตัว, R1)
 - Switch: Cisco 2960-24TT (2 ตัว, SW1, SW2)
-- PC: 3 เครื่อง (PC1, PC2, PC3)
+- PC: 2 เครื่อง (PC1, PC2)
+- Server-PT: 1 เครื่อง (DHCP Server RoguePool)
 
 **การเชื่อมต่อสาย**:
 - PC1 --(Straight-through)--> SW1 (Fa0/1)
 - PC2 --(Straight-through)--> SW2 (Fa0/1)
-- PC3 --(Straight-through)--> SW2 (Fa0/2)
+- Server-PT --(Straight-through)--> SW2 (Fa0/2)
 - SW1 (Fa0/24) --(Cross-over)--> SW2 (Fa0/24)
-- SW1 (Fa0/23) --(Cross-over)--> R1 (Gi0/0)
+- SW1 (Gi0/1) --(Cross-over)--> R1 (Gi0/0)
 
 **การกำหนด IP Address, Subnet, Gateway**:
 - PC1: DHCP (คาดว่าได้ 192.168.10.2/24, Gateway: 192.168.10.1, VLAN 10)
 - PC2: DHCP (คาดว่าได้ 192.168.20.2/24, Gateway: 192.168.20.1, VLAN 20)
-- PC3: DHCP Server ปลอม (192.168.20.100/24, VLAN 20)
+- Server-PT: DHCP Server ปลอม (192.168.20.100/24, VLAN 20)
 - R1: Gi0/0.10 = 192.168.10.1/24, Gi0/0.20 = 192.168.20.1/24
 
 **การกำหนดชื่อและการตั้งค่า**:
@@ -496,7 +497,7 @@ SW1(config-if)# switchport access vlan 10
 SW1(config-if)# exit
 
 ความหมายคำสั่ง Configure trunk port to R1 (DHCP Server)
-SW1(config)# interface fastethernet0/23
+SW1(config)# interface gigabitethernet0/1
 SW1(config-if)# switchport mode trunk
 SW1(config-if)# switchport trunk allowed vlan 10,20
 
@@ -570,7 +571,7 @@ SW2#
 ```
 
 **การทดสอบการทำงาน**:
-- ใช้คำสั่ง `show ip dhcp snooping` บน SW1 และ SW2 เพื่อยืนยันว่า Fa0/23 บน SW1 เป็น Trusted Port
+- ใช้คำสั่ง `show ip dhcp snooping` บน SW1 และ SW2 เพื่อยืนยันว่า Gi0/1 บน SW1 เป็น Trusted Port
 - ใช้คำสั่ง `show ip dhcp binding` บน R1 เพื่อยืนยันว่า PC1 และ PC2 ได้รับ IP
 - ตั้งค่า PC3 เป็น DHCP Server ปลอมและตรวจสอบว่า PC2 ยังได้รับ IP จาก R1
 - จาก PC1 ping PC2 (ควรสำเร็จ)
@@ -581,7 +582,7 @@ SW2#
                     [SW1 (Fa0/24)] -- [SW2 (Fa0/24)]
 [PC2 (VLAN 20)] -- [SW2 (Fa0/1)]
 [PC3 (VLAN 20)] -- [SW2 (Fa0/2)]
-                    [SW1 (Fa0/23)] -- [R1 (Gi0/0)]
+                    [SW1 (Gi0/1)] -- [R1 (Gi0/0)]
 ```
 
 ---
