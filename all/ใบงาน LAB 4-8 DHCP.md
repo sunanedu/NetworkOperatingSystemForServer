@@ -528,6 +528,9 @@ ____ความหมายคำสั่ง This trunk must also be trusted t
 SW1(config-if)# ip dhcp snooping trust
 SW1(config-if)# exit
 
+____ปิดฟีเจอร์ Option 82 คือการสั่งให้ SW1 หยุดการเพิ่มข้อมูล Option 82 เข้าไปในแพ็กเกจ DHCP
+SW1(config)# no ip dhcp snooping information option
+ 
 SW1(config)# exit
 
 SW1# copy running-config startup-config
@@ -577,6 +580,9 @@ SW2(config-if)# switchport trunk allowed vlan 10,20
 SW2(config-if)# ip dhcp snooping trust
 SW2(config-if)# exit
 
+____ปิดฟีเจอร์ Option 82 คือการสั่งให้ SW1 หยุดการเพิ่มข้อมูล Option 82 เข้าไปในแพ็กเกจ DHCP
+SW1(config)# no ip dhcp snooping information option
+    
 SW2(config)# exit
 
 SW2# copy running-config startup-config
